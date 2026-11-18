@@ -74,6 +74,35 @@ test('each profile reaches a single origin, separates secondary influences and s
 	}
 	assert.ok(catalog.get('rock').influences.some(([source]) => source === 'rhythm'));
 	assert.ok(catalog.influencedBy('rhythm').some(genre => genre.id === 'rock'));
+	assert.equal(catalog.get('hiphop').parent, 'funk');
+	assert.ok(catalog.get('hiphop').influences.some(([source]) => source === 'disco'));
+	assert.ok(catalog.influencedBy('disco').some(genre => genre.id === 'hiphop'));
+	assert.ok(catalog.influencedBy('rock').some(genre => genre.id === 'fusion'));
+	assert.ok(catalog.influencedBy('funk').some(genre => genre.id === 'fusion'));
+});
+
+test('the fourth generation lands three levels below the origin and spans every family', () => {
+	const depthOf = genre => {
+		let depth = 0;
+		for (let step = genre; step.parent; step = catalog.get(step.parent)) depth++;
+		return depth;
+	};
+	const deepest = catalog.genres.filter(genre => depthOf(genre) === 3).map(genre => genre.id);
+	assert.deepEqual(deepest.sort(), ['altrock', 'disco', 'fusion', 'hiphop']);
+	const families = new Set(catalog.genres.map(genre => genre.family));
+	assert.deepEqual([...families].sort(), Object.keys(catalog.families).sort());
+	assert.equal(catalog.generations.length, 4);
+	for (const genre of catalog.genres) {
+		const influences = genre.influences.map(([source]) => catalog.get(source).family);
+		assert.ok(influences.every(family => catalog.families[family]), `${genre.id}: unknown influence family`);
+	}
+	const crossingBranches = catalog.genres.flatMap(genre => genre.influences
+		.filter(([source]) => catalog.get(source).family !== genre.family)
+		.map(([source]) => `${genre.id}<-${source}`));
+	for (const arc of ['hiphop<-jazz', 'fusion<-rock', 'fusion<-funk', 'rock<-rhythm', 'funk<-jazz']) assert.ok(crossingBranches.includes(arc), arc);
+	assert.ok(catalog.get('altrock').influences.some(([source]) => source === 'metal'));
+	const deepestColumns = new Set(catalog.genres.filter(genre => depthOf(genre) === 3).map(genre => genre.family));
+	assert.ok(deepestColumns.size >= 3, 'the fourth generation spreads across branches');
 });
 
 test('Wikipedia links cover genres, instruments, artists and songs while omitting unavailable entries cleanly', () => {
@@ -127,7 +156,10 @@ test('Wikipedia links cover genres, instruments, artists and songs while omittin
 
 test('search composes terms across name, family, instrument, artist, piece, place and era', () => {
 	assert.deepEqual(catalog.search('  Trumpet   ORLEANS ').map(genre => genre.id), ['jazz']);
-	assert.deepEqual(catalog.search('rock 1970s').map(genre => genre.id), ['punk']);
+	assert.deepEqual(catalog.search('punk 1970s').map(genre => genre.id), ['punk']);
+	assert.deepEqual(catalog.search('planet rock').map(genre => genre.id), ['hiphop']);
+	assert.ok(catalog.search('fusion').some(genre => genre.id === 'fusion'));
+	assert.ok(catalog.search('chic').some(genre => genre.id === 'disco'));
 	assert.ok(catalog.search('R&B').some(genre => genre.id === 'rhythm'));
 	assert.ok(catalog.search('rhythm and blues').some(genre => genre.id === 'rhythm'));
 	assert.ok(catalog.search('clarinet').some(genre => genre.id === 'jazz'));
@@ -145,15 +177,28 @@ test('ancestor rows stay centered over visible leaves and trace ancestry across 
 		if (node.parent) node.parent.children.push(node);
 	}
 	const origin = records.get('blues');
-	assert.equal(map.measure(origin, 0), 6);
-	assert.equal(origin.unit, 3);
+	assert.equal(map.measure(origin, 0), 7);
+	assert.equal(origin.unit, 3.5);
 	assert.equal(map.isAncestor(origin, records.get('bebop')), true);
 	assert.equal(map.isAncestor(records.get('jazz'), records.get('funk')), false);
-	for (const node of records.values()) node.visible = node === origin || node.genre.family === 'rock';
-	assert.equal(map.measure(origin, 0), 2);
-	assert.equal(records.get('rock').unit, origin.unit);
-	assert.equal(records.get('metal').unit, .5);
-	assert.equal(records.get('punk').unit, 1.5);
+	assert.equal(records.get('hiphop').unit, 4.5);
+	assert.equal(records.get('altrock').unit, 6.5);
+	assert.equal(records.get('punk').unit, records.get('altrock').unit);
+});
+
+test('generation columns span the widest depth and headings follow the catalog labels', () => {
+	const view = Object.create(map);
+	view.compact = false;
+	view.depth = 3;
+	view.computeColumns = map.computeColumns;
+	const columns = view.computeColumns();
+	assert.equal(columns.length, 4);
+	assert.ok(columns[0] > 0 && columns.at(-1) < 1);
+	for (let i = 1; i < columns.length; i++) assert.ok(columns[i] > columns[i - 1]);
+	const gaps = columns.slice(1).map((value, i) => value - columns[i]);
+	assert.ok(Math.max(...gaps) - Math.min(...gaps) < 1e-9, 'columns stay evenly spaced');
+	view.compact = true;
+	assert.ok(view.computeColumns()[0] > columns[0]);
 });
 
 test('every genre has a complete two-bar pattern with playable pitches and chord lengths', () => {

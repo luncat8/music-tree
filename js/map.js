@@ -10,10 +10,11 @@ const lineageMap = {
 		this.canvas = $('canv');
 		this.ctx = this.canvas.getContext('2d');
 		this.layer = $('plot-nodes');
-		this.guides = $('plot-guides').children;
 		this.picker = $('branch-pick');
 		this.readout = $('zoom-readout');
+		this.guides = $('plot-guides').children;
 		this.makeNodes();
+		this.makeGuides();
 		this.makeKey();
 		this.picker.addEventListener('change', () => this.filter(this.picker.value));
 		this.wireCamera();
@@ -22,6 +23,7 @@ const lineageMap = {
 		this.layout();
 	},
 	makeNodes() {
+		this.depth = 0;
 		for (const genre of this.catalog.genres) {
 			const node = { genre, children: [], button: document.createElement('button'), x: 0, y: 0, width: 0, height: 0, unit: 0, visible: true };
 			this.nodes.push(node);
@@ -42,6 +44,7 @@ const lineageMap = {
 		const { genre, button, children } = node;
 		const family = this.catalog.families[genre.family];
 		node.depth = depth;
+		this.depth = Math.max(this.depth, depth);
 		button.type = 'button';
 		button.className = children.length ? 'genre-node' : 'genre-node is-tip';
 		button.dataset.level = depth;
@@ -54,6 +57,14 @@ const lineageMap = {
 		button.addEventListener('click', () => this.choose(genre.id, true));
 		this.layer.append(button);
 		for (const child of children) this.decorateNode(child, depth + 1);
+	},
+	makeGuides() {
+		const labels = this.catalog.generations;
+		for (let depth = 0; depth < this.depth + 1; depth++) {
+			const guide = document.createElement('span');
+			guide.innerHTML = `<b>${String(depth + 1).padStart(2, '0')}</b>${labels[depth] || labels.at(-1)}`;
+			$('plot-guides').append(guide);
+		}
 	},
 	makeKey() {
 		const items = $('key-items');
@@ -111,7 +122,7 @@ const lineageMap = {
 		this.height = height;
 		this.compact = width < 540;
 		this.stage.classList.toggle('is-compact', this.compact);
-		this.columns = this.compact ? [.15, .48, .815] : [.145, .485, .836];
+		this.columns = this.computeColumns();
 		let count = 0;
 		for (const node of this.nodes) {
 			node.visible = this.branch === 'all' || node === this.origin || node.genre.family === this.branch;
@@ -121,18 +132,19 @@ const lineageMap = {
 		const slots = this.measure(this.origin, 0);
 		const inset = this.compact ? 39 : 45;
 		const step = (height - inset - 54) / slots;
+		const span = this.depth ? width * (this.columns[this.depth] - this.columns[0]) / this.depth : width * .3;
+		const nodeWidth = Math.min(155, Math.max(58, span - (this.compact ? 18 : 26)));
 		for (const node of this.nodes) {
 			if (!node.visible) continue;
 			node.x = width * this.columns[node.depth];
 			node.y = inset + node.unit * step;
-			const preferred = node.depth === 2 ? 147 : 155;
-			node.width = this.compact ? Math.min(113, width * (node.depth === 2 ? .275 : .225)) : Math.min(preferred, width * .205);
+			node.width = nodeWidth;
 			node.button.style.left = `${node.x}px`;
 			node.button.style.top = `${node.y}px`;
 			node.button.style.width = `${node.width}px`;
 			node.height = node.button.offsetHeight || (this.compact ? 42 : 52);
 		}
-		for (let i = 0; i < this.guides.length; i++) this.guides[i].style.left = `${this.columns[i] * 100}%`;
+		for (let i = 0; i < this.columns.length; i++) this.guides[i].style.left = `${this.columns[i] * 100}%`;
 		for (const item of this.keyItems) {
 			const family = item.dataset.family;
 			if (!family) continue;
@@ -147,6 +159,13 @@ const lineageMap = {
 		this.canvas.height = Math.round(height * this.density);
 		this.draw();
 		if (changed) this.fit();
+	},
+	computeColumns() {
+		const first = this.compact ? .15 : .145;
+		const last = this.compact ? .85 : .855;
+		const columns = new Array(this.depth + 1);
+		for (let i = 0; i < columns.length; i++) columns[i] = first + (last - first) * (columns.length === 1 ? 0 : i / (columns.length - 1));
+		return columns;
 	},
 	draw() {
 		if (!this.width) return;

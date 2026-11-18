@@ -138,8 +138,9 @@ getObj().data().action()
 
 ## current workstream
 
-- 0.2.0 models ten genres across three branches plus dashed cross-influences, typographic profile headers and optional Wikipedia reference links for genres, instruments, artists and pieces; genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio when extending it.
-- `node --test experiments/atlas.test.cjs` checks local assets, graph integrity, reference links, studies, cancellation and script integration.
+- 0.3.0 models fourteen genres across four generations and three branches plus dashed cross-influences, typographic profile headers and optional Wikipedia reference links for genres, instruments, artists and pieces; genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio when extending it.
+- `node --test experiments/atlas.test.cjs` checks local assets, graph integrity, generation depth, reference links, studies, cancellation and script integration.
+- Map columns and generation headings derive from catalog depth (`generations` labels and the deepest parent chain); add a generation by extending the catalog only.
 
 ## housekeeping
 

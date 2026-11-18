@@ -2,6 +2,7 @@
 // edit for: repertoire, lineages, cross-influences, instruments and reference links
 const genreCatalog = {
 	wikiBase: 'https://en.wikipedia.org/wiki/',
+	generations: ['Origin', 'Branches', 'Styles', 'Offshoots'],
 	families: {
 		blues: { label: 'Blues', color: '#8cb8e7', glyph: 'disc' },
 		jazz: { label: 'Jazz', color: '#d2f78b', glyph: 'syncopation' },
@@ -14,6 +15,7 @@ const genreCatalog = {
 		Brass: 'Brass_instrument',
 		Clarinet: 'Clarinet',
 		Clavinet: 'Clavinet',
+		'Drum machine': 'Drum_machine',
 		Drums: 'Drum_kit',
 		'Electric bass': 'Bass_guitar',
 		'Electric guitar': 'Electric_guitar',
@@ -24,10 +26,14 @@ const genreCatalog = {
 		Keys: 'Keyboard_instrument',
 		Piano: 'Piano',
 		'Rhythm section': 'Rhythm_section',
+		Sampler: 'Sampler_(musical_instrument)',
 		Saxophone: 'Saxophone',
 		Saxophones: 'Saxophone',
+		Strings: 'String_section',
+		Synthesizer: 'Synthesizer',
 		Trombone: 'Trombone',
 		Trumpet: 'Trumpet',
+		Turntables: 'Turntablism',
 		'Upright bass': 'Double_bass',
 		Vibraphone: 'Vibraphone',
 		Voice: 'Singing'
@@ -109,6 +115,49 @@ const genreCatalog = {
 			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Second guitar', 'Backing vocals'], techniques: ['Downpicking', 'Power chords', 'Straight eighths'], traits: ['Fast', 'DIY'],
 			landmark: { title: 'Blitzkrieg Bop', wiki: 'Blitzkrieg_Bop', artist: 'Ramones', artistWiki: 'Ramones', year: '1976', note: 'The tight eighth notes leave very little space between the guitar and bass.' },
 			study: { title: 'Should I Stay or Should I Go', wiki: 'Should_I_Stay_or_Should_I_Go', artist: 'The Clash', artistWiki: 'The_Clash', year: '1982', note: 'Practice the stop-start verse figure before bringing the chorus up to tempo.' }
+		},
+		{
+			id: 'disco', name: 'Disco', aliases: ['disco music'], wiki: 'Disco', parent: 'funk', family: 'rhythm', date: 'Early 1970s', place: 'New York & Philadelphia, US',
+			influences: [['soul', 'Kept soul’s orchestral arrangement and vocal glamour over a dance-floor pulse instead of a ballad.']],
+			shift: 'Disco put the dance floor first. A steady kick on every beat, octave bass and sweeping strings hold a long groove together while a rhythm guitar chops at the offbeats.',
+			core: ['Electric bass', 'Drums', 'Strings'], optional: ['Electric guitar', 'Horns', 'Synthesizer', 'Voice'], techniques: ['Four-on-the-floor', 'Octave bass', 'String glissando'], traits: ['Dance music', 'Groove-led'],
+			landmark: { title: 'Le Freak', wiki: 'Le_Freak', artist: 'Chic', artistWiki: 'Chic_(band)', year: '1978', note: 'Listen for the guitar chop against the bass line and the strings that answer the vocal.' },
+			study: { title: 'Good Times', wiki: 'Good_Times_(Chic_song)', artist: 'Chic', artistWiki: 'Chic_(band)', year: '1979', note: 'Play the bass line alone first; the syncopation only works when the rests are as firm as the notes.' }
+		},
+		{
+			id: 'hiphop', name: 'Hip-hop', aliases: ['hip hop', 'rap'], wiki: 'Hip_hop_music', parent: 'funk', family: 'rhythm', date: 'Mid-1970s', place: 'The Bronx, New York, US',
+			influences: [
+				['disco', 'Extended break sections gave DJs the short drum passages they looped into new songs.'],
+				['soul', 'Supplied the vocal shouts, horn stabs and drum breaks that early records were built from.'],
+				['jazz', 'Lent sampled bass lines, chord voicings and a later tradition of live-band hip-hop.']
+			],
+			shift: 'Hip-hop turned existing records into raw material. A DJ isolates a drum break and repeats it, an MC speaks across the groove, and a sampler later plays those fragments as instruments.',
+			core: ['Turntables', 'Drum machine', 'Voice'], optional: ['Sampler', 'Synthesizer', 'Electric bass'], techniques: ['Breakbeat looping', 'Sampling', 'Rapping'], traits: ['Groove-led', 'Sampled'],
+			landmark: { title: 'Rapper’s Delight', wiki: 'Rapper%27s_Delight', artist: 'The Sugarhill Gang', artistWiki: 'The_Sugarhill_Gang', year: '1979', note: 'Follow the disco break underneath the long traded verses, then notice how little it changes.' },
+			study: { title: 'Planet Rock', wiki: 'Planet_Rock', artist: 'Afrika Bambaataa', artistWiki: 'Afrika_Bambaataa', year: '1982', note: 'Keep the drum pattern absolutely level, then place each synth phrase against it.' }
+		},
+		{
+			id: 'fusion', name: 'Jazz fusion', short: 'Fusion', aliases: ['fusion', 'jazz rock'], wiki: 'Jazz_fusion', parent: 'bebop', family: 'jazz', date: 'Late 1960s', place: 'United States',
+			influences: [
+				['rock', 'Brought distorted guitars, loud drums and rock song lengths into an improvised setting.'],
+				['funk', 'Added a syncopated electric bass and a static groove that soloists could stretch over.'],
+				['soul', 'Contributed electric piano tone, riff-based heads and a danceable pulse.']
+			],
+			shift: 'Fusion kept bebop’s harmony and improvisation but plugged it in. Electric piano, distorted guitar and funk bass carry long solos over rock rhythms and odd meters.',
+			core: ['Keyboards', 'Electric guitar', 'Electric bass'], optional: ['Drums', 'Saxophone', 'Trumpet', 'Synthesizer'], techniques: ['Extended solo forms', 'Odd meters', 'Electric comping'], traits: ['Improvised', 'Electric'],
+			landmark: { title: 'Bitches Brew', wiki: 'Bitches_Brew', artist: 'Miles Davis', artistWiki: 'Miles_Davis', year: '1970', note: 'Notice how the pulse stays vague while the electric keyboards circle the same few chords.' },
+			study: { title: 'Chameleon', wiki: 'Chameleon_(composition)', artist: 'Herbie Hancock', artistWiki: 'Herbie_Hancock', year: '1973', note: 'Learn the bass riff and the four-bar synth melody before trying a solo over them.' }
+		},
+		{
+			id: 'altrock', name: 'Alternative rock', short: 'Alt rock', aliases: ['alt-rock', 'alternative'], wiki: 'Alternative_rock', parent: 'punk', family: 'rock', date: '1980s', place: 'United States & United Kingdom',
+			influences: [
+				['rock', 'Reconnected punk with the jangling guitars and songcraft of the earlier rock bands it had rejected.'],
+				['metal', 'Supplied the heavy distortion and loud-quiet dynamics that later alternative bands pushed further.']
+			],
+			shift: 'Alternative rock took punk’s independence into stranger tunings, quiet verses and sudden loud choruses. College radio and small labels carried it before the charts did.',
+			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Voice', 'Keyboards', 'Strings'], techniques: ['Loud-quiet dynamics', 'Alternate tunings', 'Jangle arpeggios'], traits: ['DIY', 'Riff-led'],
+			landmark: { title: 'Smells Like Teen Spirit', wiki: 'Smells_Like_Teen_Spirit', artist: 'Nirvana', artistWiki: 'Nirvana_(band)', year: '1991', note: 'Listen for the drop from a nearly whispered verse into a shouted four-chord chorus.' },
+			study: { title: 'Losing My Religion', wiki: 'Losing_My_Religion', artist: 'R.E.M.', artistWiki: 'R.E.M.', year: '1991', note: 'Keep the mandolin figure even and quiet; the song depends on restraint rather than volume.' }
 		}
 	],
 	get(id) {

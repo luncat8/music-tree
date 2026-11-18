@@ -60,6 +60,30 @@ const patternScores = {
 		guide: 'Unbroken straight eighths drive an A–D–E power-chord figure. Each attack is short and equally weighted, like repeated downstrokes.',
 		lead: [52, 52, 52, 52, 52, 52, 52, 52, 57, 57, 57, 57, 59, 59, 59, 59], bass: [33, 33, 33, 33, 33, 33, 33, 33, 38, 38, 38, 38, 40, 40, 40, 40],
 		chords: [[0, .7, 45, 52], [2, .7, 45, 52], [4, .7, 50, 57], [6, .7, 52, 59]]
+	},
+	disco: {
+		name: 'Four-on-the-floor', bpm: 118, swing: false, voice: 'triangle',
+		guide: 'A D minor groove with a kick on every beat. An octave bass pushes the pulse while short string stabs answer on the offbeats.',
+		lead: [0, 69, 0, 74, 0, 69, 0, 72, 0, 69, 0, 74, 76, 0, 74, 72], bass: [38, 50, 38, 50, 41, 53, 41, 53, 43, 55, 43, 55, 45, 57, 45, 57],
+		chords: [[1, .28, 62, 65, 69, 72], [3, .28, 62, 65, 69, 72], [5, .28, 65, 69, 72, 76], [7, .28, 65, 69, 72, 76]]
+	},
+	hiphop: {
+		name: 'Loop and break', bpm: 96, swing: false, voice: 'square',
+		guide: 'A Funk-flavoured break cycles under a short three-note riff. The kick lands off the beat so the loop feels repeated rather than played.',
+		lead: [0, 0, 64, 0, 67, 0, 0, 64, 0, 0, 67, 0, 71, 0, 69, 0], bass: [39, 0, 0, 39, 0, 0, 51, 0, 39, 0, 0, 39, 0, 0, 46, 0],
+		chords: [[0, .4, 55, 58, 62], [2.5, .3, 55, 58, 62], [4, .4, 55, 58, 63], [6.5, .3, 55, 58, 63]]
+	},
+	fusion: {
+		name: 'Electric vamp', bpm: 128, swing: false, voice: 'sawtooth',
+		guide: 'An E dorian vamp in an uneven seven-sixteenth figure. Electric piano chords sit above a bass that favours the offbeats.',
+		lead: [64, 67, 71, 0, 74, 0, 71, 67, 64, 66, 69, 0, 73, 0, 69, 66], bass: [40, 0, 47, 40, 0, 50, 0, 40, 40, 0, 47, 40, 0, 52, 0, 45],
+		chords: [[0, .5, 64, 67, 71], [2, .4, 64, 67, 71], [4, .5, 66, 69, 73], [6, .4, 66, 69, 73]]
+	},
+	altrock: {
+		name: 'Quiet to loud', bpm: 124, swing: false, voice: 'sawtooth',
+		guide: 'A bare guitar figure opens into a full four-chord chorus. The verse stays thin and quiet so the loud section hits harder.',
+		lead: [52, 0, 52, 0, 55, 0, 52, 0, 59, 59, 59, 59, 57, 57, 55, 52], bass: [28, 0, 28, 0, 33, 0, 28, 0, 35, 35, 35, 35, 33, 33, 31, 28],
+		chords: [[0, .7, 40, 47], [2, .7, 45, 52], [4, .8, 47, 54], [6, .8, 45, 52]]
 	}
 };
 

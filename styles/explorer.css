@@ -129,6 +129,7 @@
 .plot.is-compact .node-date { font-size: 8px; }
 .plot.is-compact .tip-point { width: 4px; height: 4px; }
 .plot.is-compact .generation-row span { font-size: 8px; gap: 4px; letter-spacing: .7px; }
+.plot.is-compact .generation-row b { padding-right: 4px; }
 @media (min-width: 841px) and (max-height: 800px) {
 	.workspace { height: clamp(492px, calc(100svh - 235px), 566px); }
 	.genre-node { height: 56px; }
@@ -160,6 +161,8 @@
 	.player-wave { width: 88px; }
 }
 @media (max-width: 560px) {
+	.generation-row span { font-size: 7.5px; letter-spacing: .4px; gap: 3px; }
+	.generation-row b { padding-right: 3px; font-size: 8px; }
 	.map-panel { height: 457px; }
 	.map-legend { gap: 10px; padding-inline: 12px; min-height: 40px; }
 	.key-items { gap: 4px 9px; }
