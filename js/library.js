@@ -78,7 +78,7 @@ const atlasLibrary = {
 	},
 	wireSearch() {
 		document.addEventListener('keydown', event => {
-			if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || event.target.closest('input, textarea, select, [contenteditable]')) return;
+			if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || event.target.closest?.('input, textarea, select, [contenteditable]')) return;
 			event.preventDefault();
 			this.openSearch();
 		});
@@ -108,6 +108,7 @@ const atlasLibrary = {
 		this.hits = this.catalog.search(this.quickQuery.value);
 		this.cursor = -1;
 		this.quickQuery.removeAttribute('aria-activedescendant');
+		this.quickQuery.setAttribute('aria-expanded', String(Boolean(this.hits.length)));
 		$('quick-label').textContent = `GENRES / ${String(this.hits.length).padStart(2, '0')}`;
 		this.results.innerHTML = this.hits.length ? this.hits.map((genre, i) => this.searchRow(genre, i)).join('') : this.empty();
 		this.results.scrollTop = 0;

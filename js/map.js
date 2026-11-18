@@ -1,7 +1,7 @@
-// owns: lineage layout, connection rendering, branch controls and camera
-// edit for: node interaction, graph geometry, filtering and zoom
+// owns: lineage layout, branch and influence rendering, filtering and camera
+// edit for: node interaction, graph geometry, secondary arcs and zoom
 const lineageMap = {
-	branch: 'all', current: null, nodes: [], byId: new Map(), scale: 1, dx: 0, dy: 0, pointer: null,
+	branch: 'all', current: null, nodes: [], links: [], byId: new Map(), scale: 1, dx: 0, dy: 0, pointer: null,
 	init(catalog, choose) {
 		this.catalog = catalog;
 		this.choose = choose;
@@ -23,7 +23,7 @@ const lineageMap = {
 	},
 	makeNodes() {
 		for (const genre of this.catalog.genres) {
-			const node = { genre, children: [], button: document.createElement('button'), x: 0, y: 0, width: 0, unit: 0, visible: true };
+			const node = { genre, children: [], button: document.createElement('button'), x: 0, y: 0, width: 0, height: 0, unit: 0, visible: true };
 			this.nodes.push(node);
 			this.byId.set(genre.id, node);
 		}
@@ -31,6 +31,10 @@ const lineageMap = {
 			node.parent = this.byId.get(node.genre.parent);
 			if (node.parent) node.parent.children.push(node);
 			else this.origin = node;
+			for (const [sourceId] of node.genre.influences) {
+				const source = this.byId.get(sourceId);
+				if (source) this.links.push({ source, target: node });
+			}
 		}
 		this.decorateNode(this.origin, 0);
 	},
@@ -61,6 +65,10 @@ const lineageMap = {
 			items.append(item);
 			if (id !== this.origin.genre.family) this.picker.add(new Option(family.label, id));
 		}
+		this.influenceKey = document.createElement('span');
+		this.influenceKey.className = 'key-item is-edge';
+		this.influenceKey.innerHTML = '<i class="dash-mark" aria-hidden="true"></i>Influence';
+		items.append(this.influenceKey);
 		this.keyItems = items.children;
 	},
 	filter(id) {
@@ -80,6 +88,12 @@ const lineageMap = {
 		}
 		this.draw();
 	},
+	isAncestor(ancestor, node) {
+		for (let step = node; step; step = step.parent) {
+			if (step === ancestor) return true;
+		}
+		return false;
+	},
 	measure(node, first) {
 		if (!node.visible) return 0;
 		let span = 0;
@@ -95,9 +109,9 @@ const lineageMap = {
 		const changed = width !== this.width || height !== this.height;
 		this.width = width;
 		this.height = height;
-		const compact = width < 540;
-		this.stage.classList.toggle('is-compact', compact);
-		this.columns = compact ? [.15, .48, .822] : [.145, .485, .843];
+		this.compact = width < 540;
+		this.stage.classList.toggle('is-compact', this.compact);
+		this.columns = this.compact ? [.15, .48, .815] : [.145, .485, .836];
 		let count = 0;
 		for (const node of this.nodes) {
 			node.visible = this.branch === 'all' || node === this.origin || node.genre.family === this.branch;
@@ -105,20 +119,27 @@ const lineageMap = {
 			if (node.visible) count++;
 		}
 		const slots = this.measure(this.origin, 0);
-		const inset = compact ? 39 : 45;
+		const inset = this.compact ? 39 : 45;
 		const step = (height - inset - 54) / slots;
 		for (const node of this.nodes) {
 			if (!node.visible) continue;
 			node.x = width * this.columns[node.depth];
 			node.y = inset + node.unit * step;
 			const preferred = node.depth === 2 ? 147 : 155;
-			node.width = compact ? Math.min(113, width * (node.depth === 2 ? .275 : .225)) : Math.min(preferred, width * .205);
+			node.width = this.compact ? Math.min(113, width * (node.depth === 2 ? .275 : .225)) : Math.min(preferred, width * .205);
 			node.button.style.left = `${node.x}px`;
 			node.button.style.top = `${node.y}px`;
 			node.button.style.width = `${node.width}px`;
+			node.height = node.button.offsetHeight || (this.compact ? 42 : 52);
 		}
 		for (let i = 0; i < this.guides.length; i++) this.guides[i].style.left = `${this.columns[i] * 100}%`;
-		for (const item of this.keyItems) item.classList.toggle('is-muted', this.branch !== 'all' && item.dataset.family !== this.branch && item.dataset.family !== this.origin.genre.family);
+		for (const item of this.keyItems) {
+			const family = item.dataset.family;
+			if (!family) continue;
+			item.classList.toggle('is-muted', this.branch !== 'all' && family !== this.branch && family !== this.origin.genre.family);
+		}
+		const hasInfluence = this.links.some(link => link.source.visible && link.target.visible);
+		this.influenceKey.classList.toggle('is-muted', !hasInfluence);
 		$('node-count').textContent = `${count} nodes`;
 		// Oversampling keeps thin cables crisp when the whole plane is zoomed.
 		this.density = Math.min(3, Math.max(1.8, window.devicePixelRatio));
@@ -143,9 +164,18 @@ const lineageMap = {
 			ctx.stroke();
 		}
 		ctx.setLineDash([]);
+		this.drawInfluences(false);
 		for (const node of this.nodes) {
-			if (!node.parent || !node.visible) continue;
-			this.cable(node);
+			if (node.parent && node.visible) this.cable(node);
+		}
+		this.drawInfluences(true);
+		ctx.globalAlpha = 1;
+	},
+	drawInfluences(activePass) {
+		for (const link of this.links) {
+			if (!link.source.visible || !link.target.visible) continue;
+			const active = link.source === this.current || link.target === this.current;
+			if (active === activePass) this.influence(link, active);
 		}
 	},
 	cable(node) {
@@ -154,15 +184,69 @@ const lineageMap = {
 		const start = parent.x + parent.width / 2;
 		const end = node.x - node.width / 2;
 		const bend = (end - start) * .53;
-		const active = node === this.current || parent === this.current || this.current?.parent === node;
+		const active = parent === this.current || this.isAncestor(node, this.current);
 		ctx.strokeStyle = this.catalog.families[node.genre.family].color;
 		ctx.globalAlpha = active ? .95 : .68;
 		ctx.lineWidth = active ? 2.2 : 1.8;
+		ctx.setLineDash([]);
 		ctx.beginPath();
 		ctx.moveTo(start, parent.y);
 		ctx.bezierCurveTo(start + bend, parent.y, end - bend, node.y, end, node.y);
 		ctx.stroke();
-		ctx.globalAlpha = 1;
+	},
+	influence(link, active) {
+		const { source, target } = link;
+		const ctx = this.ctx;
+		ctx.strokeStyle = this.catalog.families[source.genre.family].color;
+		ctx.globalAlpha = active ? .9 : .3;
+		ctx.lineWidth = active ? 1.7 : 1.25;
+		ctx.setLineDash(active ? [5, 4] : [3.5, 4.5]);
+		if (source.depth === target.depth) return this.columnInfluence(source, target);
+		const forward = source.x < target.x ? 1 : -1;
+		const sy = source.y + Math.sign(target.y - source.y) * 5;
+		const ey = target.y + Math.sign(source.y - target.y) * 6;
+		const sx = source.x + forward * source.width / 2;
+		const ex = target.x - forward * (target.width / 2 + 2);
+		const bend = (ex - sx) * .5;
+		ctx.beginPath();
+		ctx.moveTo(sx, sy);
+		ctx.bezierCurveTo(sx + bend, sy, ex - bend, ey, ex, ey);
+		ctx.stroke();
+		this.arrow(ex, ey, forward > 0 ? 0 : Math.PI);
+	},
+	columnInfluence(source, target) {
+		const ctx = this.ctx;
+		const dir = Math.sign(target.y - source.y) || 1;
+		if (!source.children.length && !target.children.length) {
+			const sx = source.x + source.width / 2 + 2;
+			const ex = target.x + target.width / 2 + 3;
+			const cx = Math.min(this.width - 5, Math.max(sx, ex) + (this.compact ? 11 : 22));
+			ctx.beginPath();
+			ctx.moveTo(sx, source.y);
+			ctx.bezierCurveTo(cx, source.y, cx, target.y, ex, target.y);
+			ctx.stroke();
+			this.arrow(ex, target.y, Math.PI);
+			return;
+		}
+		const sy = source.y + dir * (source.height / 2 + 2);
+		const ey = target.y - dir * (target.height / 2 + 3);
+		const cx = source.x - (this.compact ? 11 : 18);
+		const cy = (sy + ey) / 2;
+		ctx.beginPath();
+		ctx.moveTo(source.x, sy);
+		ctx.quadraticCurveTo(cx, cy, target.x, ey);
+		ctx.stroke();
+		this.arrow(target.x, ey, Math.atan2(ey - cy, target.x - cx));
+	},
+	arrow(x, y, angle) {
+		const ctx = this.ctx;
+		const size = 4.5;
+		ctx.setLineDash([]);
+		ctx.beginPath();
+		ctx.moveTo(x - size * Math.cos(angle - .56), y - size * Math.sin(angle - .56));
+		ctx.lineTo(x, y);
+		ctx.lineTo(x - size * Math.cos(angle + .56), y - size * Math.sin(angle + .56));
+		ctx.stroke();
 	},
 	wireCamera() {
 		$('zoom-more').addEventListener('click', () => this.zoom(this.scale + .2));

@@ -152,7 +152,10 @@ const atlasAudio = {
 		clearTimeout(this.timer);
 		if (this.bus) {
 			const bus = this.bus;
-			const end = this.context.currentTime + .02;
+			const now = this.context.currentTime;
+			const end = now + .02;
+			// Anchor current gain before ramping so Web Audio fades cleanly instead of stepping.
+			bus.gain.setValueAtTime(bus.gain.value, now);
 			bus.gain.linearRampToValueAtTime(0, end);
 			for (const source of this.sources) source.stop(end);
 			setTimeout(() => bus.disconnect(), 30);

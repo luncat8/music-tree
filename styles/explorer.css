@@ -1,5 +1,5 @@
-/* owns: the lineage canvas, map nodes and genre file
-   edit for: graph hierarchy, profile tabs, plates and pattern transport */
+/* owns: the lineage canvas, map nodes, genre file and reference links
+   edit for: graph hierarchy, profile header, tabs, wiki links and transport */
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) clamp(326px, 27.8vw, 424px); gap: 18px; height: clamp(530px, calc(100svh - 314px), 740px); }
 .map-panel, .profile-panel { min-width: 0; display: flex; flex-direction: column; }
 .select-wrap { display: flex; position: relative; gap: 7px; align-items: center; height: 29px; border: 1px solid #3a3d3e; border-radius: 5px; background: #222527; color: #c3c7c3; }
@@ -50,46 +50,66 @@
 .camera-tools button:focus-visible { outline-offset: -3px; }
 #zoom-readout { text-align: center; min-width: 38px; color: #c8cdc5; font: 9px var(--mono); }
 #zoom-fit { height: 29px; width: 30px; }
-.map-legend { display: flex; align-items: center; gap: 20px; min-height: 44px; padding: 0 18px; flex: none; border-top: 1px solid var(--rule-soft); }
+.map-legend { display: flex; align-items: center; gap: 18px; min-height: 44px; padding: 6px 18px; flex: none; border-top: 1px solid var(--rule-soft); }
 .key-items, .key-item { display: flex; align-items: center; }
-.key-items { gap: 17px; }
-.key-item { font-size: 12px; color: #c3c7c1; gap: 6px; }
+.key-items { flex-wrap: wrap; gap: 5px 15px; }
+.key-item { font-size: 12px; color: #c3c7c1; gap: 6px; white-space: nowrap; }
+.key-item.is-edge { padding-left: 12px; border-left: 1px solid var(--rule-soft); color: #a9b1a6; }
 .color-dot { width: 6px; height: 6px; background: var(--tone); border-radius: 50%; display: inline-block; flex: none; }
+.dash-mark { width: 13px; border-top: 1.5px dashed currentColor; display: inline-block; flex: none; }
 .key-item.is-muted { opacity: .4; }
 .node-count { color: #9ca39a; margin-left: auto; font: 9px var(--mono); white-space: nowrap; }
 .file-number { color: #aaafa9; font-size: 9px; letter-spacing: 1.1px; }
 .profile-locator { display: inline-flex; align-items: center; gap: 14px; }
 .return-map { display: none; color: var(--text); padding: 4px 7px; border: 1px solid var(--rule); border-radius: 4px; font: 10px var(--mono); }
 @media (max-width: 840px) { .return-map { display: inline-block; } }
-.profile-art { height: clamp(153px, 20.5vh, 223px); min-height: 0; flex: none; position: relative; isolation: isolate; overflow: hidden; background: #0d0f0e; }
-.profile-art > img { height: 100%; width: 100%; object-fit: cover; object-position: 62% 40%; display: block; filter: brightness(1.16); }
-.profile-art::after { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(0deg, #090b0bd1, #10131106 62%), linear-gradient(90deg, #080b0975, transparent 76%); }
-.registration { position: absolute; z-index: 1; top: 15px; right: 15px; width: 10px; height: 10px; border-top: 1px solid #dfe3d080; border-right: 1px solid #dfe3d080; }
-.art-type { position: absolute; z-index: 1; bottom: 16px; left: 19px; right: 16px; }
+.profile-head { flex: none; padding: 16px 19px 15px; border-bottom: 1px solid var(--rule-soft); background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--tone) 12%, transparent), transparent 62%), linear-gradient(180deg, color-mix(in srgb, var(--tone) 5%, #171a1b), #191b1d); }
+.head-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .family-label { display: inline-flex; align-items: center; gap: 6px; color: var(--tone); font-size: 9px; line-height: 1.4; letter-spacing: 1.4px; }
 .family-label::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.art-type h3 { margin: 3px 0 7px; font-weight: 550; letter-spacing: -.055em; font-size: clamp(32px, 3.15vw, 50px); line-height: 1.02; }
-.art-meta, .art-meta > span { display: flex; align-items: center; }
-.art-meta { flex-wrap: wrap; gap: 4px 12px; color: #d0d3ca; font: 10px / 1.5 var(--mono); }
-.art-meta > span { gap: 5px; }
-.art-meta .icon { width: 12px; height: 12px; color: #c3c9bb; }
+.wiki-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border: 1px solid #383e3a; border-radius: 4px; background: #202423; color: #c4cac1; text-decoration: none; font: 9px / 1.3 var(--mono); text-transform: uppercase; letter-spacing: .85px; }
+.wiki-badge .icon { width: 11px; height: 11px; color: var(--tone); }
+.wiki-badge:hover { color: var(--ink); border-color: color-mix(in srgb, var(--tone) 58%, #484f49); background: color-mix(in srgb, var(--tone) 10%, #202423); }
+.profile-head h3 { margin: 6px 0 8px; font-weight: 560; letter-spacing: -.05em; font-size: clamp(28px, 2.55vw, 40px); line-height: 1.05; }
+.head-meta, .head-meta > span { display: flex; align-items: center; }
+.head-meta { flex-wrap: wrap; gap: 4px 13px; color: #c0c6bc; font: 10px / 1.5 var(--mono); }
+.head-meta > span { gap: 5px; }
+.head-meta .icon { width: 12px; height: 12px; color: #a7b0a2; }
 .profile-tabs { display: flex; align-items: stretch; flex: none; gap: 24px; height: 42px; padding: 0 19px; border-bottom: 1px solid var(--rule-soft); }
 .profile-tabs button { position: relative; font-size: 13px; font-weight: 500; color: #a4aaa4; }
 .profile-tabs button:hover { color: var(--ink); }
 .profile-tabs button[aria-selected='true'] { color: var(--accent); }
 .profile-tabs button[aria-selected='true']::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--accent); }
-.profile-page { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 17px 19px 5px; scrollbar-width: thin; scrollbar-color: #50564b transparent; }
+.profile-page { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 17px 19px 10px; scrollbar-width: thin; scrollbar-color: #50564b transparent; }
 .profile-page:focus-visible { outline-offset: -3px; }
 .file-section + .file-section { margin-top: 17px; }
-.section-kicker { display: flex; align-items: center; gap: 6px; color: #b4b9b0; font: 10px / 1.5 var(--mono); text-transform: uppercase; letter-spacing: 1.25px; margin: 0 0 8px; }
+.section-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; color: #b4b9b0; font: 10px / 1.5 var(--mono); text-transform: uppercase; letter-spacing: 1.25px; margin: 0 0 8px; }
 .section-kicker.is-shift { color: var(--tone); }
 .section-kicker .icon { width: 13px; height: 13px; }
+.kicker-link { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 3px; }
+.kicker-link:hover { color: var(--ink); text-decoration-color: currentColor; }
 .file-section p { color: #cccfca; font-size: 14px; line-height: 1.55; }
+.influence-list { display: flex; flex-direction: column; gap: 9px; }
+.influence-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.profile-page .influence-item p { font-size: 12.5px; line-height: 1.5; color: #b7bdb4; }
 .chip-row { display: flex; gap: 5px; flex-wrap: wrap; }
-.tag-chip { display: inline-block; padding: 3px 8px; border: 1px solid #3c413e; border-radius: 4px; background: #242826; color: #d5d9d1; font-size: 11.5px; line-height: 1.5; }
+.tag-chip, .genre-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid #3c413e; border-radius: 4px; background: #242826; color: #d5d9d1; font-size: 11.5px; line-height: 1.5; }
+.tag-chip.is-link { text-decoration: none; }
+.tag-chip.is-link .icon { width: 11px; height: 11px; color: #949e90; }
+.tag-chip.is-link:hover { color: var(--ink); border-color: color-mix(in srgb, var(--tone) 55%, #4a504b); background: color-mix(in srgb, var(--tone) 9%, #242826); }
+.tag-chip.is-link:hover .icon { color: var(--tone); }
+.genre-chip { gap: 6px; padding-inline: 9px; border-color: #424843; background: #212524; color: #e4e8e1; font-weight: 500; }
+.genre-chip.is-secondary { border-style: dashed; border-color: #4d544d; }
+.genre-chip:hover { color: var(--ink); border-color: var(--tone); background: color-mix(in srgb, var(--tone) 10%, #212524); }
+.wiki-badge:focus-visible, .tag-chip.is-link:focus-visible, .genre-chip:focus-visible, .kicker-link:focus-visible, .wiki-inline:focus-visible { outline-offset: 2px; }
 .profile-page .piece-title { font-size: 16px; font-weight: 550; letter-spacing: -.35px; color: var(--ink); line-height: 1.3; }
-.profile-page .piece-credit { margin: 3px 0 6px; color: #a9b2a4; font: 9px / 1.55 var(--mono); }
+.profile-page .piece-credit { margin: 3px 0 6px; color: #a9b2a4; font: 9.5px / 1.55 var(--mono); }
 .profile-page .piece-note { font-size: 12px; }
+.wiki-inline { display: inline-flex; align-items: center; gap: 3px; color: inherit; text-decoration: underline; text-decoration-color: #555f52; text-underline-offset: 3px; }
+.wiki-inline .icon { width: 11px; height: 11px; color: #97a192; }
+.piece-title .wiki-inline .icon { width: 13px; height: 13px; }
+.wiki-inline:hover { color: var(--tone); text-decoration-color: currentColor; }
+.wiki-inline:hover .icon { color: currentColor; }
 .player-well { padding: 14px 16px 16px; flex: none; }
 .pattern-player { display: flex; align-items: center; gap: 11px; width: 100%; min-height: 58px; padding: 10px 12px; background: #242923; border: 1px solid #3b4534; border-radius: 7px; text-align: left; }
 .pattern-player:hover { background: #2c3328; border-color: #59684a; }
@@ -113,7 +133,7 @@
 	.workspace { height: clamp(492px, calc(100svh - 235px), 566px); }
 	.genre-node { height: 56px; }
 	.genre-node.is-tip { height: 40px; }
-	.profile-art { height: 140px; }
+	.profile-head { padding-block: 13px 12px; }
 	.panel-heading { min-height: 49px; }
 	.profile-page { padding-top: 13px; }
 	.file-section p { font-size: 13px; }
@@ -121,32 +141,36 @@
 	.player-well { padding-block: 10px 13px; }
 }
 @media (min-width: 1500px) {
-	.profile-page { padding: 22px 23px 8px; }
+	.profile-head { padding: 18px 23px 16px; }
+	.profile-page { padding: 20px 23px 10px; }
 	.file-section p { font-size: 14px; }
 }
 @media (max-width: 1050px) and (min-width: 841px) {
 	.workspace { gap: 12px; grid-template-columns: minmax(0, 1fr) 310px; }
-	.key-items { gap: 11px; }
+	.key-items { gap: 4px 10px; }
+	.key-item.is-edge { padding-left: 9px; }
 	.map-legend { gap: 10px; padding-inline: 12px; }
 }
 @media (max-width: 840px) {
 	.workspace { height: auto; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 	.map-panel { height: 502px; }
 	.profile-panel { scroll-margin-top: 14px; }
-	.profile-art { height: 210px; }
-	.art-type h3 { font-size: 43px; }
-	.art-meta { font-size: 10px; }
-	.profile-page { max-height: none; padding-bottom: 5px; }
+	.profile-head h3 { font-size: 36px; }
+	.profile-page { max-height: none; padding-bottom: 10px; }
 	.player-wave { width: 88px; }
 }
 @media (max-width: 560px) {
 	.map-panel { height: 457px; }
-	.map-legend { gap: 12px; padding-inline: 12px; min-height: 40px; }
-	.key-items { gap: 10px; }
+	.map-legend { gap: 10px; padding-inline: 12px; min-height: 40px; }
+	.key-items { gap: 4px 9px; }
 	.key-item { font-size: 10px; gap: 4px; }
+	.key-item.is-edge { padding-left: 7px; }
+	.dash-mark { width: 10px; }
 	.map-legend .micro-label { font-size: 8px; letter-spacing: .6px; }
 	.plot-tools { bottom: 11px; left: 12px; right: 10px; }
 	.node-count, .pan-hint { font-size: 8px; }
-	.profile-art { height: 175px; }
-	.profile-page { padding-top: 18px; }
+	.profile-head { padding: 14px 15px 13px; }
+	.profile-head h3 { font-size: 31px; }
+	.profile-tabs, .profile-page { padding-inline: 15px; }
+	.profile-page { padding-top: 15px; }
 }

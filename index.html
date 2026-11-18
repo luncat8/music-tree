@@ -38,7 +38,7 @@
 			<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
 			<symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z" fill="currentColor" stroke-linejoin="round"/></symbol>
 			<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor"/></symbol>
-			<symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+			<symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
 		</defs>
 	</svg>
 	<a class="skip-link" href="#main-content">Skip to atlas</a>
@@ -83,10 +83,10 @@
 			</section>
 			<section class="panel profile-panel" id="profile-region" aria-labelledby="profile-heading">
 				<div class="panel-heading"><h2 id="profile-heading"><svg class="icon heading-icon"><use href="#i-profile"/></svg>Genre profile</h2><span class="profile-locator"><button type="button" id="return-map" class="return-map">↑ Map</button><span class="file-number" id="file-number"></span></span></div>
-				<div class="profile-art">
-					<img id="profile-plate" src="assets/plates/jazz.webp" alt="A saxophonist under a club spotlight.">
-					<span class="registration" aria-hidden="true"></span>
-					<div class="art-type"><span class="family-label" id="profile-family"></span><h3 id="genre-name" tabindex="-1" aria-live="polite">Jazz</h3><div class="art-meta"><span><svg class="icon"><use href="#i-clock"/></svg><span id="genre-date"></span></span><span><svg class="icon"><use href="#i-pin"/></svg><span id="genre-place"></span></span></div></div>
+				<div class="profile-head">
+					<div class="head-top"><span class="family-label" id="profile-family"></span><a class="wiki-badge" id="genre-wiki" target="_blank" rel="noopener noreferrer" hidden>Wikipedia<svg class="icon" aria-hidden="true"><use href="#i-out"/></svg></a></div>
+					<h3 id="genre-name" tabindex="-1" aria-live="polite">Jazz</h3>
+					<div class="head-meta"><span><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span id="genre-date"></span></span><span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span id="genre-place"></span></span></div>
 				</div>
 				<div class="profile-tabs" role="tablist" aria-label="Genre details"><button id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="profile-page" data-tab="overview">Overview</button><button id="tab-sound" type="button" role="tab" aria-selected="false" aria-controls="profile-page" data-tab="sound" tabindex="-1">Sound</button><button id="tab-listening" type="button" role="tab" aria-selected="false" aria-controls="profile-page" data-tab="listening" tabindex="-1">Listening</button></div>
 				<div class="profile-page" id="profile-page" role="tabpanel" aria-labelledby="tab-overview" tabindex="0"></div>
@@ -101,16 +101,16 @@
 		<footer class="atlas-footer"><span class="edition"><i></i>MUSIC TREE<span class="footer-slash">/</span>VOL. 01</span><span class="collection-size" id="collection-size"></span></footer>
 	</main>
 	<dialog class="atlas-dialog search-dialog" id="search-dialog" aria-label="Quick genre search">
-		<div class="quick-input"><svg class="icon"><use href="#i-search"/></svg><input id="quick-query" type="search" placeholder="Search the atlas…" aria-label="Search genres, instruments or places" role="combobox" aria-controls="quick-results" aria-autocomplete="list" aria-expanded="true" autocomplete="off"><button type="button" class="escape-key" data-dismiss>Esc</button></div>
+		<div class="quick-input"><svg class="icon"><use href="#i-search"/></svg><input id="quick-query" type="search" placeholder="Search the atlas…" aria-label="Search genres, instruments, artists or places" role="combobox" aria-controls="quick-results" aria-autocomplete="list" aria-expanded="true" autocomplete="off"><button type="button" class="escape-key" data-dismiss>Esc</button></div>
 		<div class="quick-label micro-label" id="quick-label">GENRES</div><div class="quick-results" id="quick-results" role="listbox" aria-label="Matching genres"></div>
 		<div class="quick-footer"><span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span><span><kbd>↵</kbd> Open file</span></div>
 	</dialog>
 	<dialog class="atlas-dialog guide-dialog" id="guide-dialog" aria-labelledby="guide-title">
 		<div class="guide-top"><span class="eyebrow"><span class="signal-dash"></span>FIELD NOTES / 01</span><button type="button" class="icon-button" aria-label="Close guide" data-dismiss><svg class="icon"><use href="#i-close"/></svg></button></div>
 		<h2 id="guide-title">Reading the tree<span class="title-stop">.</span></h2>
-		<p>This volume follows ten genres from the blues into jazz, R&B and rock. Each connection highlights one influence, not a genre’s only origin.</p>
-		<dl class="guide-steps"><div><dt>01 / Explore</dt><dd>Select a node to read its file. Filter by branch, drag the canvas to pan, or scroll over it to zoom. Fit restores the whole map.</dd></div><div><dt>02 / Listen</dt><dd>Play a short, synthesized study of the selected style. Sound explains the pattern; Listening pairs a landmark recording with a piece to learn.</dd></div><div><dt>03 / Find</dt><dd>Press <kbd>/</kbd> to search by name, instrument or place. Use the arrow keys and Enter to open a result, or browse the genre index.</dd></div></dl>
-		<p class="guide-note">Dates are approximate. Family portraits are illustrative; patterns are original studies, not excerpts from the recordings.</p>
+		<p>This volume follows ten genres from the blues into jazz, R&B and rock. Solid lines trace each genre’s primary branch; dashed lines mark additional influences.</p>
+		<dl class="guide-steps"><div><dt>01 / Explore</dt><dd>Select a node to read its file and follow parent or influence links. Filter by branch, drag the canvas to pan, or scroll over it to zoom. Fit restores the whole map.</dd></div><div><dt>02 / Listen</dt><dd>Play a short, synthesized study of the selected style. Sound covers the pattern and instruments; Listening pairs a landmark recording with a piece to learn.</dd></div><div><dt>03 / Find</dt><dd>Press <kbd>/</kbd> to search by name, instrument, artist or place. Use the arrow keys and Enter to open a result, or browse the genre index.</dd></div></dl>
+		<p class="guide-note">Dates are approximate. Patterns are original studies, not excerpts from the recordings. Reference links open Wikipedia in a new tab when online.</p>
 	</dialog>
 	<noscript><p class="noscript">Enable JavaScript to explore the genre map and play its patterns.</p></noscript>
 	<script src="js/marks.js"></script>

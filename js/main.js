@@ -19,7 +19,7 @@ function jumpToAtlasGenre(id) {
 }
 
 function bootAtlas() {
-	genreProfile.init(genreCatalog, () => atlasAudio.toggle(root.genre.id), () => lineageMap.focus());
+	genreProfile.init(genreCatalog, selectAtlasGenre, () => atlasAudio.toggle(root.genre.id), () => lineageMap.focus());
 	atlasAudio.init(state => genreProfile.transport(state));
 	lineageMap.init(genreCatalog, selectAtlasGenre);
 	atlasLibrary.init(genreCatalog, jumpToAtlasGenre, () => atlasAudio.stop());

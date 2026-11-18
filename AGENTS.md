@@ -39,7 +39,7 @@ getObj().data().action()
 
 - file:// friendly, classic <script> tags, no modules, no build.
 - guard module.exports so files also run under node.
-- no internet links: vendor any lib as a local js file.
+- no external runtime dependencies: vendor scripts and fonts locally; optional reference `<a>` links open externally and never fetch on load.
 
 ## architecture
 
@@ -60,14 +60,15 @@ getObj().data().action()
 - keep this map updated when ownership changes:
 	index.html — document landmarks, SVG symbols and classic script order.
 	js/main.js — boot, shared root and selection wiring only.
-	js/catalog.js — genre records, chosen influences and family plates.
+	js/catalog.js — genre graph, editorial records, family metadata and Wikipedia slugs.
 	js/marks.js — shared inline icon references and family swatches.
-	js/map.js — node layout, canvas links, branch filter and camera.
-	js/profile.js — genre file, tab content and transport display.
+	js/map.js — node layout, branch and influence links, filter and camera.
+	js/profile.js — typographic genre file, lineage links, reference links and transport display.
 	js/audio.js — two-bar studies, Web Audio scheduling and cancellation.
 	js/library.js — page navigation, index, keyboard search and field guide.
 	styles/atlas.css, explorer.css, library.css — page shell, workspace and browsing respectively.
-	experiments/atlas.test.cjs — offline catalog, transport and integration checks.
+	experiments/atlas.test.cjs — offline asset, graph, reference link, transport and integration checks.
+	plan-deferred.md — deferred and low-priority feature directions.
 - new code goes to its owner, never appended "because the file is already there". no owner exists -> new file + header + map entry.
 - file > ~500 lines = defect. split by feature within the same plan.
 - moves are pure moves: contiguous ranges, snap to enclosing declarations, no behavior change.
@@ -137,8 +138,8 @@ getObj().data().action()
 
 ## current workstream
 
-- 0.1.0 is a local-first atlas: ten files across three branches of blues influence. Preserve keyboard-accessible nodes, local assets and gesture-initiated audio when extending it.
-- `node --test experiments/atlas.test.cjs` checks the catalog, two-bar studies, cancellation and classic script integration.
+- 0.2.0 models ten genres across three branches plus dashed cross-influences, typographic profile headers and optional Wikipedia reference links for genres, instruments, artists and pieces; genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio when extending it.
+- `node --test experiments/atlas.test.cjs` checks local assets, graph integrity, reference links, studies, cancellation and script integration.
 
 ## housekeeping
 

@@ -1,15 +1,21 @@
-// owns: the selected genre file, detail tabs and pattern transport display
-// edit for: profile content, listening recommendations and player feedback
+// owns: the selected genre file, lineage links, reference links and transport display
+// edit for: profile sections, Wikipedia anchors, listening pieces and player feedback
 const genreProfile = {
-	init(catalog, toggle, backToMap) {
+	init(catalog, choose, toggle, backToMap) {
 		this.catalog = catalog;
 		this.panel = $('profile-region');
 		this.page = $('profile-page');
-		this.image = $('profile-plate');
+		this.wiki = $('genre-wiki');
 		this.player = $('pattern-toggle');
 		this.tabs = Array.from(this.panel.querySelectorAll('[role="tab"]'));
 		this.player.addEventListener('click', toggle);
 		$('return-map').addEventListener('click', backToMap);
+		this.page.addEventListener('click', event => {
+			const target = event.target.closest('[data-open]');
+			if (!target) return;
+			choose(target.dataset.open, false);
+			$('genre-name').focus({ preventScroll: true });
+		});
 		this.tabs.forEach((button, i) => {
 			button.addEventListener('click', () => this.openTab(button.dataset.tab));
 			button.addEventListener('keydown', event => this.tabKey(event, i));
@@ -27,12 +33,16 @@ const genreProfile = {
 		this.genre = genre;
 		this.score = score;
 		const family = this.catalog.families[genre.family];
+		const wiki = this.catalog.wikiUrl(genre.wiki);
 		this.panel.style.setProperty('--tone', family.color);
 		$('file-number').textContent = `FILE / ${this.catalog.number(genre)}`;
-		this.image.src = `assets/plates/${family.plate}.webp`;
-		this.image.alt = family.alt;
 		$('profile-family').textContent = genre.parent ? `${family.label} family` : 'Root genre';
 		$('genre-name').textContent = genre.name;
+		this.wiki.hidden = !wiki;
+		if (wiki) {
+			this.wiki.href = wiki;
+			this.wiki.setAttribute('aria-label', `${genre.name} on Wikipedia (opens in new tab)`);
+		}
 		$('genre-date').textContent = genre.date;
 		$('genre-place').textContent = genre.place;
 		$('play-meta').textContent = `${score.name} · ${score.bpm} BPM`;
@@ -68,24 +78,57 @@ const genreProfile = {
 	section(title, content, shift = false) {
 		return `<section class="file-section"><h4 class="section-kicker${shift ? ' is-shift' : ''}">${shift ? atlasIcon('shift') : ''}${title}</h4>${content}</section>`;
 	},
+	wikiLink(slug, text, className, label = text) {
+		const url = this.catalog.wikiUrl(slug);
+		if (!url) return '';
+		return `<a class="${className}" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${label} on Wikipedia (opens in new tab)">${text}${atlasIcon('out')}</a>`;
+	},
+	genreChip(genre, secondary = false) {
+		const color = this.catalog.families[genre.family].color;
+		const note = secondary ? ', additional influence' : '';
+		return `<button type="button" class="genre-chip${secondary ? ' is-secondary' : ''}" data-open="${genre.id}" aria-label="Open ${genre.name}${note} profile">${atlasDot(color)}${genre.short || genre.name}</button>`;
+	},
 	tags(items) {
 		return `<div class="chip-row">${items.map(item => `<span class="tag-chip">${item}</span>`).join('')}</div>`;
+	},
+	instruments(items) {
+		const chips = items.map(item => this.wikiLink(this.catalog.instruments[item], item, 'tag-chip is-link') || `<span class="tag-chip">${item}</span>`);
+		return `<div class="chip-row">${chips.join('')}</div>`;
+	},
+	influences(entries) {
+		if (!entries.length) return '';
+		const items = entries.map(([id, note]) => `<div class="influence-item">${this.genreChip(this.catalog.get(id), true)}<p>${note}</p></div>`).join('');
+		return this.section('Also shaped by', `<div class="influence-list">${items}</div>`);
+	},
+	reach(genre) {
+		const items = [
+			...this.catalog.childrenOf(genre.id).map(child => this.genreChip(child, false)),
+			...this.catalog.influencedBy(genre.id).map(target => this.genreChip(target, true))
+		];
+		return items.length ? this.section('Led to', `<div class="chip-row">${items.join('')}</div>`) : '';
 	},
 	overview() {
 		const genre = this.genre;
 		const parent = this.catalog.get(genre.parent);
-		const heading = parent ? `The shift from ${parent.short || parent.name}` : 'At the roots';
-		return this.section(heading, `<p>${genre.shift}</p>`, true) + this.section('Core instruments', this.tags(genre.core));
+		const parentLink = parent ? `<button type="button" class="kicker-link" data-open="${parent.id}" aria-label="Open parent genre ${parent.name}">${parent.short || parent.name}</button>` : '';
+		const heading = parent ? `The shift from ${parentLink}` : 'At the roots';
+		return this.section(heading, `<p>${genre.shift}</p>`, true)
+			+ this.influences(genre.influences)
+			+ this.section('Core instruments', this.instruments(genre.core))
+			+ this.reach(genre);
 	},
 	sound() {
 		const genre = this.genre;
 		return this.section(this.score.name, `<p>${this.score.guide}</p>`, true)
 			+ this.section('Key techniques', this.tags(genre.techniques))
-			+ this.section('Additional instruments', this.tags(genre.optional))
+			+ this.section('Additional instruments', this.instruments(genre.optional))
 			+ this.section('Characteristics', this.tags(genre.traits));
 	},
 	piece(heading, record) {
-		return this.section(heading, `<p class="piece-title">${record[0]}</p><p class="piece-credit">${record[1]}</p><p class="piece-note">${record[2]}</p>`);
+		const title = this.wikiLink(record.wiki, record.title, 'wiki-inline', `${record.title} by ${record.artist}`) || record.title;
+		const artist = this.wikiLink(record.artistWiki, record.artist, 'wiki-inline') || record.artist;
+		const credit = [artist, record.ensemble].filter(Boolean).join(' ');
+		return this.section(heading, `<p class="piece-title">${title}</p><p class="piece-credit">${credit} · ${record.year}</p><p class="piece-note">${record.note}</p>`);
 	},
 	listening() {
 		return this.piece('Landmark recording', this.genre.landmark) + this.piece('A piece to learn', this.genre.study);
