@@ -58,8 +58,16 @@ getObj().data().action()
 - relevance is decided from head -12. never read a full file just to learn what it is.
 
 - keep this map updated when ownership changes:
-	main.js — owns boot/wiring only. edit for load order, boot, wiring.
-	ui.js — owns <ui concern>. edit for <ui changes>.
+	index.html — document landmarks, SVG symbols and classic script order.
+	js/main.js — boot, shared root and selection wiring only.
+	js/catalog.js — genre records, chosen influences and family plates.
+	js/marks.js — shared inline icon references and family swatches.
+	js/map.js — node layout, canvas links, branch filter and camera.
+	js/profile.js — genre file, tab content and transport display.
+	js/audio.js — two-bar studies, Web Audio scheduling and cancellation.
+	js/library.js — page navigation, index, keyboard search and field guide.
+	styles/atlas.css, explorer.css, library.css — page shell, workspace and browsing respectively.
+	experiments/atlas.test.cjs — offline catalog, transport and integration checks.
 - new code goes to its owner, never appended "because the file is already there". no owner exists -> new file + header + map entry.
 - file > ~500 lines = defect. split by feature within the same plan.
 - moves are pure moves: contiguous ranges, snap to enclosing declarations, no behavior change.
@@ -129,10 +137,8 @@ getObj().data().action()
 
 ## current workstream
 
-[rewritten each phase, never accumulated. only constraints that matter right now. delete lines that stopped mattering.]
-
-e.g. splitting ui.js per plan 0.4: dom_smoke after each move, benches at end only.
-e.g. experiment loader derives scripts from index.html and runs them in one VM context.
+- 0.1.0 is a local-first atlas: ten files across three branches of blues influence. Preserve keyboard-accessible nodes, local assets and gesture-initiated audio when extending it.
+- `node --test experiments/atlas.test.cjs` checks the catalog, two-bar studies, cancellation and classic script integration.
 
 ## housekeeping
 

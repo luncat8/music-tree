@@ -1,0 +1,52 @@
+/* owns: catalog browsing, search and field notes
+   edit for: index rows, command search and dialog layouts */
+.library-panel { min-height: 420px; }
+.library-panel .panel-heading { min-height: 60px; }
+.index-find { display: flex; align-items: center; gap: 8px; padding-inline: 9px; background: #202325; border: 1px solid var(--rule); border-radius: 5px; color: var(--quiet); }
+.index-find .icon { width: 14px; height: 14px; }
+.index-find input { background: none; border: 0; min-width: 0; width: 145px; height: 30px; font-size: 12px; }
+.index-find:focus-within { outline: 1px solid var(--accent); }
+.index-find input:focus { outline: 0; }
+.index-columns, .index-entry { display: grid; grid-template-columns: 48px minmax(120px, 1.3fr) minmax(80px, .9fr) minmax(90px, .65fr) 20px; align-items: center; gap: 16px; padding-inline: 24px; }
+.index-columns { height: 36px; color: var(--quiet); font: 9px var(--mono); letter-spacing: 1.25px; background: #151819; }
+.index-entry { width: 100%; height: 51px; border-top: 1px solid var(--rule-soft); text-align: left; }
+.index-entry:hover, .index-entry:focus-visible { background: #252a25; }
+.index-entry:focus-visible { outline-offset: -2px; }
+.entry-number, .entry-date { font: 10px var(--mono); color: #b1b8ad; }
+.entry-name { font-size: 15px; letter-spacing: -.3px; font-weight: 500; }
+.entry-family { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: #bdc5b8; }
+.index-entry > .icon { width: 15px; height: 15px; color: #939b8d; }
+.empty-results { padding: 28px 20px; color: var(--text); font-size: 13px; line-height: 1.6; }
+.atlas-dialog { width: min(470px, calc(100vw - 32px)); max-height: calc(100svh - 40px); padding: 0; overflow: auto; color: var(--ink); background: #1a1d1e; border: 1px solid #434942; border-radius: 12px; box-shadow: 0 18px 100px #0009; }
+.atlas-dialog::backdrop { background: #080a09b8; backdrop-filter: blur(4px); }
+.quick-input { display: flex; align-items: center; gap: 12px; padding: 16px 17px; border-bottom: 1px solid var(--rule); }
+.quick-input > .icon { color: var(--accent); }
+.quick-input input { min-width: 0; flex: 1; padding: 3px 0; background: none; border: 0; outline: 0; font-size: 16px; }
+.quick-input:focus-within { border-color: #707f61; }
+input::placeholder { color: #949c91; }
+.escape-key { height: 23px; padding-inline: 6px; }
+.quick-label { padding: 16px 17px 8px; }
+.quick-results { max-height: min(355px, 51svh); overflow-y: auto; padding: 0 8px 8px; scrollbar-width: thin; }
+.quick-option { display: flex; align-items: center; gap: 10px; padding: 11px 9px; border-radius: 5px; cursor: pointer; }
+.quick-option[aria-selected='true'] { background: #2b3229; }
+.quick-option span:nth-child(2) { font-size: 14px; }
+.quick-option .entry-date { margin-left: auto; font-size: 9px; }
+.quick-option > .icon { width: 14px; height: 14px; color: var(--quiet); }
+.quick-footer { padding: 10px 16px; display: flex; align-items: center; gap: 18px; border-top: 1px solid var(--rule-soft); color: #a8afa3; }
+.quick-footer span { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; }
+.quick-footer kbd { height: 17px; min-width: 16px; }
+.guide-dialog { padding: 20px 23px; }
+.guide-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.guide-dialog h2 { margin: 12px 0 10px; font-size: 31px; font-weight: 550; letter-spacing: -1.5px; }
+.guide-dialog p, .guide-steps dd { font-size: 13px; line-height: 1.65; color: #c0c6bc; }
+.guide-steps { margin: 18px 0; }
+.guide-steps div { border-top: 1px solid var(--rule-soft); padding: 12px 0; }
+.guide-steps dt { color: var(--accent); font: 10px var(--mono); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.guide-dialog .guide-note { font: 10px / 1.6 var(--mono); color: #9aa391; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
+@media (max-width: 560px) {
+	.index-columns, .index-entry { grid-template-columns: 26px minmax(0, 1fr) 72px 12px; gap: 8px; padding-inline: 12px; }
+	.index-columns span:nth-child(3), .entry-family { display: none; }
+	.index-find input { width: 96px; font-size: 11px; }
+	.entry-name { font-size: 14px; }
+	.guide-dialog { padding: 16px; }
+}
