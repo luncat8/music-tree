@@ -59,7 +59,9 @@ getObj().data().action()
 
 - keep this map updated when ownership changes:
 	main.js — owns boot/wiring only. edit for load order, boot, wiring.
-	ui.js — owns <ui concern>. edit for <ui changes>.
+	data.js — owns genre tree content and patterns. edit for adding genres, fields, patterns.
+	audio.js — owns pattern playback (WebAudio). edit for synth timbre, tempo, note parsing.
+	ui.js — owns tree render, detail panel, selection. edit for markup and fields.
 - new code goes to its owner, never appended "because the file is already there". no owner exists -> new file + header + map entry.
 - file > ~500 lines = defect. split by feature within the same plan.
 - moves are pure moves: contiguous ranges, snap to enclosing declarations, no behavior change.
@@ -129,10 +131,7 @@ getObj().data().action()
 
 ## current workstream
 
-[rewritten each phase, never accumulated. only constraints that matter right now. delete lines that stopped mattering.]
-
-e.g. splitting ui.js per plan 0.4: dom_smoke after each move, benches at end only.
-e.g. experiment loader derives scripts from index.html and runs them in one VM context.
+prototype from draft.txt: DOM tree + detail panel + pattern playback. node --check on edits, /tmp dom smoke after render changes.
 
 ## housekeeping
 
