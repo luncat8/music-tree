@@ -70,7 +70,7 @@ const patternScores = {
 		chords: [[1, .28, 62, 65, 69, 72], [3, .28, 62, 65, 69, 72], [5, .28, 65, 69, 72, 76], [7, .28, 65, 69, 72, 76]]
 	},
 	hiphop: {
-		name: 'Loop and break', bpm: 96, swing: false, voice: 'square',
+		name: 'Loop and break', bpm: 96, swing: false, voice: 'square', drums: { ...backbeatDrums, kicks: [0, 2.5, 4, 6.5] },
 		guide: 'A Funk-flavoured break cycles under a short three-note riff. The kick lands off the beat so the loop feels repeated rather than played.',
 		lead: [0, 0, 64, 0, 67, 0, 0, 64, 0, 0, 67, 0, 71, 0, 69, 0], bass: [39, 0, 0, 39, 0, 0, 51, 0, 39, 0, 0, 39, 0, 0, 46, 0],
 		chords: [[0, .4, 55, 58, 62], [2.5, .3, 55, 58, 62], [4, .4, 55, 58, 63], [6.5, .3, 55, 58, 63]]
@@ -110,8 +110,24 @@ const patternScores = {
 		guide: 'A sparse guitar figure opens up into stacked power chords. Hear how the low D returns with the full band at the end.',
 		lead: [50, 0, 53, 0, 55, 53, 0, 0, 57, 57, 55, 55, 53, 53, 50, 50], bass: [26, 0, 0, 0, 29, 0, 0, 0, 33, 33, 31, 31, 29, 29, 26, 26],
 		chords: [[4, .85, 45, 52, 57], [5, .85, 43, 50, 55], [6, .85, 41, 48, 53], [7, .9, 38, 45, 50]]
+	},
+	hardcore: {
+		name: 'Rave stabs', bpm: 148, swing: false, voice: 'triangle', drums: { ...floorDrums, snares: [1, 2.75, 3, 5, 6.5, 7] },
+		guide: 'A kick keeps every beat while extra snare hits cut across it. Short minor chords echo the piano stabs of UK rave.',
+		lead: [0, 74, 0, 77, 0, 76, 74, 0, 0, 74, 0, 81, 77, 0, 76, 0], bass: [38, 0, 38, 50, 0, 38, 45, 0, 38, 0, 38, 50, 0, 41, 43, 0],
+		chords: [[.5, .3, 62, 65, 69], [2.75, .2, 62, 65, 69], [3.5, .24, 65, 69, 72], [4.5, .3, 62, 65, 69], [6.5, .22, 60, 64, 67], [7.5, .22, 60, 64, 67]]
+	},
+	jungle: {
+		name: 'Sliced break', bpm: 160, swing: false, voice: 'sine', drums: { kicks: [0, 1.75, 2.5, 4, 5.5, 6.75], snares: [1, 2.25, 3, 3.5, 4.75, 5, 6.25, 7, 7.5] },
+		guide: 'Snares jump ahead of the beat and double up before the bar ends. Follow the slower bass phrase underneath the sixteenth-note drum edits.',
+		lead: [0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 67], bass: [31, 31, 0, 0, 31, 0, 0, 38, 34, 34, 0, 0, 31, 0, 0, 0],
+		chords: [[1.5, .26, 63, 67, 74], [5.5, .24, 62, 65, 70]]
 	}
 };
+
+function patternDrums(score) {
+	return score.drums || backbeatDrums;
+}
 
 const atlasAudio = {
 	context: null, bus: null, noise: null, sources: [], ticket: 0, active: false, timer: 0,
@@ -173,7 +189,7 @@ const atlasAudio = {
 			this.tone(score.bass[i], when, beat * .65, 'triangle', .31, 660);
 			this.rattle(when, offbeat ? .045 : .065, offbeat ? .04 : .058, 6200);
 		}
-		const { kicks, snares } = score.drums || backbeatDrums;
+		const { kicks, snares } = patternDrums(score);
 		for (const offset of kicks) this.drum(start + offset * beat, false);
 		for (const offset of snares) this.drum(start + offset * beat, true);
 		for (const [offset, duration, ...notes] of score.chords) {
@@ -218,4 +234,4 @@ const atlasAudio = {
 	}
 };
 
-if (typeof module !== 'undefined' && module.exports) module.exports = { patternScores, atlasAudio };
+if (typeof module !== 'undefined' && module.exports) module.exports = { patternScores, patternDrums, atlasAudio };

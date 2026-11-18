@@ -1,7 +1,8 @@
 // owns: lineage layout, branch and influence rendering, filtering and camera
 // edit for: node interaction, graph geometry, secondary arcs and zoom
 const lineageMap = {
-	branch: 'all', current: null, nodes: [], links: [], byId: new Map(), scale: 1, dx: 0, dy: 0, pointer: null,
+	branch: 'all', current: null, nodes: [], links: [], byId: new Map(),
+	scale: 1, dx: 0, dy: 0, pointer: null, capture: null, dragging: false,
 	init(catalog, choose) {
 		this.catalog = catalog;
 		this.choose = choose;
@@ -55,6 +56,9 @@ const lineageMap = {
 		const mark = children.length ? `<span class="node-glyph">${atlasIcon(family.glyph)}</span>` : '<i class="tip-point"></i>';
 		button.innerHTML = `${mark}<span class="node-type"><span class="node-name">${genre.short || genre.name}</span><span class="node-date">${genre.date}</span></span>`;
 		button.addEventListener('click', () => this.choose(genre.id, true));
+		button.addEventListener('focus', () => {
+			if (button.matches(':focus-visible')) this.revealNode(node);
+		});
 		this.layer.append(button);
 		for (const child of children) this.decorateNode(child, depth + 1);
 	},
@@ -86,7 +90,6 @@ const lineageMap = {
 		this.branch = id;
 		this.picker.value = id;
 		this.layout();
-		this.fit();
 		if (id !== 'all') this.choose(id, false);
 	},
 	select(genre) {
@@ -98,6 +101,7 @@ const lineageMap = {
 			node.button.setAttribute('aria-pressed', String(picked));
 		}
 		this.draw();
+		this.revealNode(this.current);
 	},
 	isAncestor(ancestor, node) {
 		for (let step = node; step; step = step.parent) {
@@ -114,12 +118,16 @@ const lineageMap = {
 		return span;
 	},
 	layout() {
-		const width = this.stage.clientWidth;
+		const viewWidth = this.stage.clientWidth;
 		const height = this.stage.clientHeight;
-		if (!width || !height) return;
-		const changed = width !== this.width || height !== this.height;
+		if (!viewWidth || !height) return;
+		const changed = viewWidth !== this.viewWidth || height !== this.height;
+		// Keep a legible plane even when the viewport cannot show every column at once.
+		const width = Math.max(viewWidth, (this.depth + 1) * 96);
+		this.viewWidth = viewWidth;
 		this.width = width;
 		this.height = height;
+		this.space.style.width = `${width}px`;
 		this.compact = width / Math.max(1, this.depth) < 216;
 		this.stage.classList.toggle('is-compact', this.compact);
 		this.columns = this.computeColumns();
@@ -161,7 +169,8 @@ const lineageMap = {
 		this.canvas.width = Math.round(width * this.density);
 		this.canvas.height = Math.round(height * this.density);
 		this.draw();
-		if (changed) this.fit();
+		if (changed) this.setCamera(1);
+		this.revealNode(this.current);
 	},
 	computeColumns() {
 		const inset = this.compact ? .115 : .145;
@@ -238,7 +247,8 @@ const lineageMap = {
 	columnInfluence(source, target) {
 		const ctx = this.ctx;
 		const dir = Math.sign(target.y - source.y) || 1;
-		if (!source.children.length && !target.children.length) {
+		const gap = Math.abs(target.y - source.y) - (source.height + target.height) / 2;
+		if (gap < 12 || (!source.children.length && !target.children.length)) {
 			const sx = source.x + source.width / 2 + 2;
 			const ex = target.x + target.width / 2 + 3;
 			const cx = Math.min(this.width - 5, Math.max(sx, ex) + (this.compact ? 11 : 22));
@@ -280,51 +290,83 @@ const lineageMap = {
 			this.zoom(this.scale * Math.exp(-delta * .0014), event.clientX - box.left, event.clientY - box.top);
 		}, { passive: false });
 		this.stage.addEventListener('pointerdown', event => {
-			if (event.button !== 0 || event.target.closest('button, .camera-tools') || this.pointer !== null) return;
+			if (event.button !== 0 || event.target.closest('.camera-tools') || this.pointer !== null) return;
 			this.pointer = event.pointerId;
 			this.grabX = event.clientX - this.dx;
 			this.grabY = event.clientY - this.dy;
-			this.stage.setPointerCapture(event.pointerId);
-			this.stage.classList.add('is-dragging');
+			this.capture = event.target;
+			this.capture.setPointerCapture(this.pointer);
 		});
 		this.stage.addEventListener('pointermove', event => {
 			if (event.pointerId !== this.pointer) return;
-			this.dx = event.clientX - this.grabX;
-			this.dy = event.clientY - this.grabY;
+			const dx = event.clientX - this.grabX;
+			const dy = event.clientY - this.grabY;
+			if (!this.dragging) {
+				if (Math.hypot(dx - this.dx, dy - this.dy) < 5) return;
+				// Transfer capture so drags starting on a card never activate it on release.
+				this.dragging = true;
+				this.capture = this.stage;
+				this.capture.setPointerCapture(this.pointer);
+				this.stage.classList.add('is-dragging');
+			}
+			this.dx = dx;
+			this.dy = dy;
 			this.transform();
 		});
-		this.stage.addEventListener('lostpointercapture', () => {
-			this.pointer = null;
+		this.stage.addEventListener('lostpointercapture', event => {
+			if (event.pointerId !== this.pointer || event.target !== this.capture) return;
+			this.pointer = this.capture = null;
+			this.dragging = false;
 			this.stage.classList.remove('is-dragging');
 		});
 	},
-	zoom(value, x = this.width / 2, y = this.height / 2) {
-		const next = Math.max(.6, Math.min(1.8, value));
-		this.dx = x - (x - this.dx) * next / this.scale;
-		this.dy = y - (y - this.dy) * next / this.scale;
-		this.scale = next;
+	zoom(value, x = this.viewWidth / 2, y = this.height / 2) {
+		const next = Math.max(this.minScale(), Math.min(1.8, value));
+		this.setCamera(next, x - (x - this.dx) * next / this.scale, y - (y - this.dy) * next / this.scale);
+	},
+	setCamera(scale, dx = 0, dy = 0) {
+		this.scale = scale;
+		this.dx = dx;
+		this.dy = dy;
 		this.transform();
 		this.updateZoom();
 	},
 	transform() {
-		this.dx = Math.max(this.width * (.35 - this.scale), Math.min(this.width * .65, this.dx));
+		this.dx = Math.max(this.viewWidth * .35 - this.width * this.scale, Math.min(this.viewWidth * .65, this.dx));
 		this.dy = Math.max(this.height * (.35 - this.scale), Math.min(this.height * .65, this.dy));
 		this.space.style.transform = `translate(${this.dx}px, ${this.dy}px) scale(${this.scale})`;
 	},
 	updateZoom() {
 		this.readout.value = `${Math.round(this.scale * 100)}%`;
-		$('zoom-less').disabled = this.scale <= .601;
+		$('zoom-less').disabled = this.scale <= this.minScale() + .001;
 		$('zoom-more').disabled = this.scale >= 1.799;
 	},
+	fitScale() {
+		return this.viewWidth / this.width;
+	},
+	minScale() {
+		return Math.min(.6, this.fitScale());
+	},
 	fit() {
-		this.scale = 1;
-		this.dx = 0;
-		this.dy = 0;
+		const scale = this.fitScale();
+		this.setCamera(scale, 0, this.height * (1 - scale) / 2);
+	},
+	revealNode(node) {
+		if (!node?.visible || !this.width) return;
+		const x = node.x * this.scale + this.dx;
+		const y = node.y * this.scale + this.dy;
+		const halfWidth = (node.width / 2 + 8) * this.scale;
+		const halfHeight = (node.height / 2 + 8) * this.scale;
+		const dx = Math.max(halfWidth - x, 0) - Math.max(x + halfWidth - this.viewWidth, 0);
+		const dy = Math.max(halfHeight - y, 0) - Math.max(y + halfHeight - (this.height - 47), 0);
+		if (!dx && !dy) return;
+		this.dx += dx;
+		this.dy += dy;
 		this.transform();
-		this.updateZoom();
 	},
 	focus() {
-		this.fit();
+		if (this.scale < 1) this.zoom(1);
+		this.revealNode(this.current);
 		this.current.button.focus({ preventScroll: true });
 		this.stage.scrollIntoView({ block: 'nearest' });
 	}

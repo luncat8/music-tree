@@ -8,9 +8,9 @@
 .select-wrap .select-caret { position: absolute; right: 7px; width: 12px; }
 .select-wrap select { width: 123px; height: 100%; appearance: none; border: 0; border-radius: inherit; background: transparent; padding: 0 21px 0 30px; font: 11.5px var(--sans); cursor: pointer; }
 .select-wrap select option { background: #242729; color: var(--ink); }
-.plot { position: relative; isolation: isolate; overflow: hidden; min-height: 0; flex: 1; touch-action: none; cursor: grab; user-select: none; background-color: #151819; background-image: radial-gradient(ellipse at 50% 42%, #242a1c30, transparent 70%), radial-gradient(circle, #79807745 .85px, transparent .95px); background-size: auto, 17px 17px; background-position: center; }
+.plot { position: relative; isolation: isolate; overflow: clip; min-height: 0; flex: 1; touch-action: none; cursor: grab; user-select: none; background-color: #151819; background-image: radial-gradient(ellipse at 50% 42%, #242a1c30, transparent 70%), radial-gradient(circle, #79807745 .85px, transparent .95px); background-size: auto, 17px 17px; background-position: center; }
 .plot.is-dragging, .plot.is-dragging * { cursor: grabbing; }
-.plot-space { position: absolute; inset: 0; transform-origin: top left; }
+.plot-space { position: absolute; inset: 0 auto 0 0; transform-origin: top left; }
 .plot-space canvas, .node-layer, .generation-row { position: absolute; inset: 0; width: 100%; height: 100%; }
 .generation-row { pointer-events: none; }
 .generation-row span { display: inline-flex; gap: 7px; align-items: center; position: absolute; top: 21px; transform: translateX(-50%); color: #a5aba2; white-space: nowrap; font-size: 10px; letter-spacing: 1.1px; }
@@ -102,6 +102,17 @@
 .genre-chip.is-secondary { border-style: dashed; border-color: #4d544d; }
 .genre-chip:hover { color: var(--ink); border-color: var(--tone); background: color-mix(in srgb, var(--tone) 10%, #212524); }
 .wiki-badge:focus-visible, .tag-chip.is-link:focus-visible, .genre-chip:focus-visible, .kicker-link:focus-visible, .wiki-inline:focus-visible { outline-offset: 2px; }
+.rhythm-study { margin-top: 9px; padding: 8px 9px 9px; border: 1px solid var(--rule); border-radius: 5px; background: #171b1c; font: 10px / 1.3 var(--mono); color: #bcc4b9; }
+.rhythm-study figcaption { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 6px; color: #d6ddd4; }
+.rhythm-study figcaption span { color: #9fa99e; }
+.rhythm-grid { display: grid; grid-template-columns: auto repeat(2, minmax(0, 1fr)); align-items: center; gap: 4px 8px; text-transform: uppercase; }
+.rhythm-bar { color: #a3aca0; letter-spacing: .5px; }
+.rhythm-track, .rhythm-beat { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.rhythm-track { min-height: 9px; align-items: center; gap: 3px; }
+.rhythm-beat { align-items: center; gap: 1px; }
+.rhythm-beat i { height: 5px; border-radius: 1px; background: #2c3431; }
+.rhythm-beat i:first-child { background: #414c44; }
+.rhythm-beat i.is-hit { height: 9px; background: var(--tone); }
 .profile-page .piece-title { font-size: 16px; font-weight: 550; letter-spacing: -.35px; color: var(--ink); line-height: 1.3; }
 .profile-page .piece-credit { margin: 3px 0 6px; color: #a9b2a4; font: 9.5px / 1.55 var(--mono); }
 .profile-page .piece-note { font-size: 12px; }

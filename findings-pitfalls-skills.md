@@ -8,3 +8,5 @@
 - A generated heading row must be owned by the file that measures the graph. Static generation markup drifts from the data as soon as a new depth appears; build the row from a catalog label array in the layout owner.
 - Derive column fractions from the measured maximum depth and size nodes from the column gap; a fixed column table clips the deepest generation on narrow viewports.
 - Check real card and text bounds at phone widths and short desktop heights. A DOM mock can show valid positions while rendered card heights and font ranges still collide.
+- Keep viewport bounds separate from the width of a panning chart. `overflow: clip` prevents native focus scrolling from adding a second offset to the camera transform.
+- Chromium can retarget a touch on blank canvas to a nearby card. Keep capture on the original pointer target for taps, then transfer capture to the stage after a movement threshold. Ignore the old target’s `lostpointercapture` during that transfer.

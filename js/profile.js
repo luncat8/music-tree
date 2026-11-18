@@ -1,5 +1,5 @@
 // owns: the selected genre file, lineage links, reference links and transport display
-// edit for: profile sections, Wikipedia anchors, listening pieces and player feedback
+// edit for: profile tabs, rhythm diagrams, Wikipedia links and player feedback
 const genreProfile = {
 	init(catalog, choose, toggle, backToMap) {
 		this.catalog = catalog;
@@ -117,9 +117,31 @@ const genreProfile = {
 			+ this.section('Core instruments', this.instruments(genre.core))
 			+ this.reach(genre);
 	},
+	rhythmCount(hits, start) {
+		const syllables = ['', ' e', ' and', ' a'];
+		return hits.filter(beat => beat >= start && beat < start + 4)
+			.map(beat => `${Math.floor(beat) - start + 1}${syllables[(beat % 1) * 4]}`).join(', ') || 'rest';
+	},
+	rhythmTrack(hits, start) {
+		let track = '';
+		for (let beat = start; beat < start + 4; beat++) {
+			track += '<span class="rhythm-beat">';
+			for (let step = 0; step < 4; step++) track += hits.includes(beat + step / 4) ? '<i class="is-hit"></i>' : '<i></i>';
+			track += '</span>';
+		}
+		return `<div class="rhythm-track">${track}</div>`;
+	},
+	rhythm() {
+		const { kicks, snares } = patternDrums(this.score);
+		const rows = [['Kick', kicks], ['Snare', snares]].map(([label, hits]) => (
+			`<span>${label}</span>${this.rhythmTrack(hits, 0)}${this.rhythmTrack(hits, 4)}`
+		)).join('');
+		const counts = [0, 4].map(start => `Bar ${start / 4 + 1}: kick ${this.rhythmCount(kicks, start)}; snare ${this.rhythmCount(snares, start)}.`).join(' ');
+		return `<figure class="rhythm-study"><figcaption>Kick &amp; snare<span>4 steps per beat</span></figcaption><div class="rhythm-grid" role="img" aria-label="${counts}"><span></span><span class="rhythm-bar">Bar 1</span><span class="rhythm-bar">Bar 2</span>${rows}</div></figure>`;
+	},
 	sound() {
 		const genre = this.genre;
-		return this.section(this.score.name, `<p>${this.score.guide}</p>`, true)
+		return this.section(this.score.name, `<p>${this.score.guide}</p>${this.rhythm()}`, true)
 			+ this.section('Key techniques', this.tags(genre.techniques))
 			+ this.section('Additional instruments', this.instruments(genre.optional))
 			+ this.section('Characteristics', this.tags(genre.traits));

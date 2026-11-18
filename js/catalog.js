@@ -2,7 +2,7 @@
 // edit for: repertoire, lineages, cross-influences, instruments and reference links
 const genreCatalog = {
 	wikiBase: 'https://en.wikipedia.org/wiki/',
-	generations: ['Origin', 'Branches', 'Styles', 'Offshoots', 'Scenes'],
+	generations: ['Origin', 'Branches', 'Styles', 'Offshoots', 'Scenes', 'Crossovers', 'Underground', 'New forms'],
 	families: {
 		blues: { label: 'Blues', color: '#8cb8e7', glyph: 'disc' },
 		jazz: { label: 'Jazz', color: '#d2f78b', glyph: 'syncopation' },
@@ -25,6 +25,7 @@ const genreCatalog = {
 		Horns: 'Horn_section',
 		Keyboards: 'Keyboard_instrument',
 		Keys: 'Keyboard_instrument',
+		'Mixing desk': 'Mixing_console',
 		Piano: 'Piano',
 		'Rhythm section': 'Rhythm_section',
 		Sampler: 'Sampler_(musical_instrument)',
@@ -181,9 +182,8 @@ const genreCatalog = {
 			study: { title: 'Strings of Life', wiki: 'Strings_of_Life', artist: 'Rhythim Is Rhythim', artistWiki: 'Derrick_May_(musician)', year: '1987', note: 'Tap a steady pulse while you learn the syncopated piano figure.' }
 		},
 		{
-			id: 'dnb', name: 'Drum and bass', short: 'DnB', aliases: ['drum & bass', 'd&b', 'd’n’b', "d'n'b", 'jungle'], wiki: 'Drum_and_bass', parent: 'hiphop', family: 'rhythm', date: 'Early 1990s', place: 'United Kingdom',
-			influences: [['funk', 'Funk records supplied drum breaks that jungle producers sped up and cut into new rhythms.']],
-			shift: 'Drum and bass grew out of UK breakbeat hardcore and jungle, taking hip-hop’s breakbeat sampling to rave tempos. Deep bass owed as much to Jamaican sound-system culture as the drums did to sampled records.',
+			id: 'dnb', name: 'Drum and bass', short: 'DnB', aliases: ['drum & bass', 'drum n bass', 'd&b', 'd’n’b', "d'n'b"], wiki: 'Drum_and_bass', parent: 'jungle', influences: [], family: 'rhythm', date: 'Early 1990s', place: 'United Kingdom',
+			shift: 'Drum and bass kept jungle’s fast breaks and deep bass. Some producers used steadier drum patterns; others brought in spacious harmony or live instruments. The two names still overlap, especially on early records.',
 			core: ['Sampler', 'Synthesizer', 'Sequencer'], optional: ['Drum machine', 'Voice', 'Upright bass'], techniques: ['Break slicing', 'Sub-bass programming', 'Double-time drums'], traits: ['Breakbeat', 'Bass-heavy'],
 			landmark: { title: 'Inner City Life', wiki: 'Inner_City_Life', artist: 'Goldie', ensemble: 'featuring Diane Charlemagne', artistWiki: 'Goldie', year: '1994', note: 'Follow the quick edits in the drums while the voice stretches across them.' },
 			study: { title: 'Brown Paper Bag', artist: 'Roni Size', ensemble: 'with Reprazent', artistWiki: 'Roni_Size', year: '1997', note: 'Learn the upright bass figure slowly, then keep it steady against the fast breakbeat.' }
@@ -195,6 +195,25 @@ const genreCatalog = {
 			core: ['Electric guitar', 'Bass guitar', 'Drums', 'Voice'], optional: ['Effects pedals', 'Backing vocals'], techniques: ['Drop D tuning', 'Fuzz guitar', 'Loud-quiet dynamics'], traits: ['Distorted', 'Riff-led'],
 			landmark: { title: 'Outshined', wiki: 'Outshined', artist: 'Soundgarden', artistWiki: 'Soundgarden', year: '1991', note: 'Count seven beats in the verse riff, then hear it give way to the square pulse of the chorus.' },
 			study: { title: 'Come as You Are', wiki: 'Come_as_You_Are_(Nirvana_song)', artist: 'Nirvana', artistWiki: 'Nirvana_(band)', year: '1992', note: 'Learn the two-string riff without effects first, then add a chorus pedal for the wavering sound.' }
+		},
+		{
+			id: 'hardcore', name: 'Breakbeat hardcore', short: 'Hardcore', aliases: ['hardcore rave', 'rave hardcore', 'oldskool hardcore'], wiki: 'Breakbeat_hardcore', parent: 'house', family: 'rhythm', date: 'Around 1990', place: 'United Kingdom',
+			influences: [
+				['techno', 'UK rave DJs played techno alongside house; repeating synth figures and machine drums carried into hardcore.'],
+				['hiphop', 'Hip-hop showed producers how to loop and rearrange recorded drum breaks.']
+			],
+			shift: 'On British rave floors, house’s steady kick sped up and shared space with sampled drum breaks. Bright piano stabs, pitched-up voices and abrupt edits turned familiar club sounds into something rowdier.',
+			core: ['Sampler', 'Synthesizer', 'Drum machine'], optional: ['Sequencer', 'Keys', 'Voice'], techniques: ['Layered breaks', 'Pitch-shifted samples', 'Rave stabs'], traits: ['Rave music', 'Breakbeat'],
+			landmark: { title: 'On a Ragga Tip', wiki: 'On_a_Ragga_Tip', artist: 'SL2', artistWiki: 'SL2_(musical_group)', year: '1992', note: 'Listen for Jah Screechy’s sampled voice and the way the busy break pushes against the steady pulse.' },
+			study: { title: 'Bombscare', wiki: 'Bombscare', artist: '2 Bad Mice', artistWiki: '2_Bad_Mice', year: '1991', note: 'Learn the short synth riff first, then keep it steady over a chopped drum loop.' }
+		},
+		{
+			id: 'jungle', name: 'Jungle', aliases: ['jungle music', 'old school jungle', 'ragga jungle'], wiki: 'Jungle_music', parent: 'hardcore', family: 'rhythm', date: 'Early 1990s', place: 'United Kingdom',
+			influences: [['funk', 'Funk and soul records supplied drum breaks that producers sped up and cut into new rhythms.']],
+			shift: 'Jungle let the chopped break take over from hardcore’s steady kick. Black British producers and MCs drew on Jamaican sound systems, dub and dancehall, pairing fast, shifting drums with deep bass that often felt half as fast.',
+			core: ['Sampler', 'Synthesizer', 'Sequencer'], optional: ['Voice', 'Turntables', 'Mixing desk'], techniques: ['Break slicing', 'Snare rolls', 'Dub bass'], traits: ['Sound-system culture', 'Breakbeat'],
+			landmark: { title: 'Original Nuttah', wiki: 'Original_Nuttah', artist: 'UK Apachi', ensemble: 'with Shy FX', year: '1994', note: 'Hear how the MC fits quick bursts of words into gaps in the chopped drums.' },
+			study: { title: 'Valley of the Shadows', wiki: 'Valley_of_the_Shadows', artist: 'Origin Unknown', artistWiki: 'Origin_Unknown', year: '1993', note: 'Tap the slow bass pulse while learning one bar of the much faster break.' }
 		}
 	],
 	get(id) {

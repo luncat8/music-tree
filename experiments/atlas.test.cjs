@@ -7,7 +7,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const catalog = require('../js/catalog.js');
 const { atlasIcon, atlasDot } = require('../js/marks.js');
-const { patternScores, atlasAudio } = require('../js/audio.js');
+const { patternScores, patternDrums, atlasAudio } = require('../js/audio.js');
 const map = require('../js/map.js');
 const profile = require('../js/profile.js');
 const base = path.join(__dirname, '..');
@@ -19,12 +19,14 @@ const depthOf = genre => {
 	return depth;
 };
 
-function withMarks(t) {
+function withProfileDeps(t) {
+	global.patternDrums = patternDrums;
 	global.atlasIcon = atlasIcon;
 	global.atlasDot = atlasDot;
 	t.after(() => {
 		delete global.atlasIcon;
 		delete global.atlasDot;
+		delete global.patternDrums;
 	});
 }
 
@@ -95,23 +97,25 @@ test('each profile reaches a single origin, separates secondary influences and s
 	assert.ok(catalog.influencedBy('funk').some(genre => genre.id === 'fusion'));
 });
 
-test('the fourth-generation offshoots lead to four new records in the fifth column', () => {
+test('the atlas keeps its offshoots and traces the UK rave route as primary lineage', () => {
 	const offshoots = catalog.genres.filter(genre => depthOf(genre) === 3);
 	assert.deepEqual(offshoots.map(genre => genre.id).sort(), ['altrock', 'disco', 'fusion', 'hiphop']);
 	assert.deepEqual([...new Set(offshoots.map(genre => genre.family))].sort(), ['jazz', 'rhythm', 'rock']);
 	const deepest = Math.max(...catalog.genres.map(depthOf));
-	assert.equal(deepest, 4);
+	assert.equal(deepest, 7);
 	assert.equal(catalog.generations.length, deepest + 1);
-	assert.equal(catalog.genres.length, 18);
-	const scenes = catalog.genres.filter(genre => depthOf(genre) === deepest);
-	assert.deepEqual(Object.fromEntries(scenes.map(genre => [genre.id, genre.parent])), {
-		house: 'disco', techno: 'disco', dnb: 'hiphop', grunge: 'altrock'
-	});
-	for (const genre of scenes) {
-		assert.equal(genre.family, catalog.get(genre.parent).family, `${genre.id} stays in its map branch`);
+	assert.equal(catalog.genres.length, 20);
+	const scenes = catalog.genres.filter(genre => depthOf(genre) === 4);
+	assert.deepEqual(Object.fromEntries(scenes.map(genre => [genre.id, genre.parent])), { house: 'disco', techno: 'disco', grunge: 'altrock' });
+	const rave = ['hardcore', 'jungle', 'dnb'].map(id => catalog.get(id));
+	assert.deepEqual(rave.map(genre => genre.parent), ['house', 'hardcore', 'jungle']);
+	assert.deepEqual(rave.map(depthOf), [5, 6, 7]);
+	for (const genre of rave) {
+		assert.equal(genre.family, 'rhythm');
 		assert.ok(genre.wiki);
-		assert.ok(genre.influences.length, `${genre.id} credits additional influences`);
 	}
+	assert.deepEqual(rave[0].influences.map(([source]) => source).sort(), ['hiphop', 'techno']);
+	assert.ok(catalog.influencedBy('funk').includes(rave[1]));
 	const crossingBranches = catalog.genres.flatMap(genre => genre.influences
 		.filter(([source]) => catalog.get(source).family !== genre.family)
 		.map(([source]) => `${genre.id}<-${source}`));
@@ -138,7 +142,7 @@ test('Wikipedia links cover genres, instruments, artists and songs while omittin
 	assert.equal(catalog.wikiUrl(''), '');
 	assert.equal(catalog.wikiUrl('Swing_music'), 'https://en.wikipedia.org/wiki/Swing_music');
 
-	withMarks(t);
+	withProfileDeps(t);
 	const view = Object.create(profile);
 	view.catalog = catalog;
 	view.genre = catalog.get('metal');
@@ -166,14 +170,18 @@ test('Wikipedia links cover genres, instruments, artists and songs while omittin
 });
 
 test('Led to includes primary offshoots and influence-only paths without inventing successors', t => {
-	withMarks(t);
+	withProfileDeps(t);
 	const view = Object.assign(Object.create(profile), { catalog });
 	assert.match(view.reach(catalog.get('disco')), /class="genre-chip" data-open="house"/);
-	assert.deepEqual(catalog.childrenOf('house'), []);
 	view.genre = catalog.get('house');
-	assert.match(view.overview(), /Led to<\/h4><div class="chip-row"><button type="button" class="genre-chip is-secondary" data-open="techno"/);
+	assert.match(view.reach(view.genre), /class="genre-chip" data-open="hardcore".*class="genre-chip is-secondary" data-open="techno"/);
+	assert.deepEqual(catalog.childrenOf('techno'), []);
 	view.genre = catalog.get('techno');
-	assert.match(view.overview(), /Also shaped by[\s\S]*data-open="house"/);
+	const overview = view.overview();
+	assert.match(overview, /Led to<\/h4><div class="chip-row"><button type="button" class="genre-chip is-secondary" data-open="hardcore"/);
+	assert.match(overview, /Also shaped by[\s\S]*data-open="house"/);
+	view.genre = catalog.get('dnb');
+	assert.match(view.overview(), /The shift from <button[^>]+data-open="jungle"/);
 	assert.equal(view.reach(catalog.get('grunge')), '');
 });
 
@@ -189,9 +197,12 @@ test('search composes terms across name, family, instrument, artist, piece, plac
 	assert.deepEqual(catalog.search('West End Blues').map(genre => genre.id), ['jazz']);
 	assert.deepEqual(catalog.search('Hot Five').map(genre => genre.id), ['jazz']);
 	assert.deepEqual(catalog.search('Charlie Parker').map(genre => genre.id), ['bebop']);
-	for (const [query, id] of [['chicago house', 'house'], ['detroit techno', 'techno'], [' DRUM   AND BASS ', 'dnb'], ['D&B', 'dnb'], ['Seattle sound', 'grunge']]) {
+	for (const [query, id] of [['chicago house', 'house'], ['detroit techno', 'techno'], [' DRUM   AND BASS ', 'dnb'], ['D&B', 'dnb'], ['drum n bass', 'dnb'], ['rave hardcore', 'hardcore'], ['Seattle sound', 'grunge']]) {
 		assert.equal(catalog.search(query)[0]?.id, id, `first hit for ${query}`);
 	}
+	assert.deepEqual(catalog.search('jungle').map(genre => genre.id), ['jungle']);
+	assert.deepEqual(catalog.search('Valley of the Shadows').map(genre => genre.id), ['jungle']);
+	assert.deepEqual(catalog.search('Bombscare').map(genre => genre.id), ['hardcore']);
 	assert.equal(catalog.search('').length, catalog.genres.length);
 	assert.equal(catalog.search('no such genre').length, 0);
 });
@@ -208,7 +219,7 @@ test('ancestor rows stay centered over visible leaves and trace ancestry across 
 	assert.equal(map.isAncestor(origin, records.get('dnb')), true);
 	assert.equal(map.isAncestor(records.get('jazz'), records.get('funk')), false);
 	assert.equal(records.get('disco').unit, (records.get('house').unit + records.get('techno').unit) / 2);
-	assert.equal(records.get('hiphop').unit, records.get('dnb').unit);
+	for (const id of ['house', 'hardcore', 'jungle']) assert.equal(records.get(id).unit, records.get('dnb').unit);
 	assert.equal(records.get('punk').unit, records.get('grunge').unit);
 });
 
@@ -231,7 +242,26 @@ test('column geometry and guide headings follow the maximum depth in the catalog
 	}
 });
 
-test('every genre has a complete two-bar pattern with playable pitches and chord lengths', () => {
+test('the camera fits a wide plane or reveals offscreen nodes without shrinking them', () => {
+	const view = Object.assign(Object.create(map), { viewWidth: 290, width: 768, height: 360, space: { style: {} }, updateZoom() {} });
+	const node = { x: 680, y: 235, width: 70, height: 36, visible: true };
+	view.setCamera(1);
+	view.revealNode(node);
+	assert.equal(view.scale, 1);
+	assert.ok(view.dx < 0 && node.x + view.dx + node.width / 2 < view.viewWidth);
+	assert.equal(view.dy, 0);
+	const shift = view.dx;
+	view.revealNode(node);
+	assert.equal(view.dx, shift);
+	view.fit();
+	assert.equal(view.scale, view.viewWidth / view.width);
+	assert.equal(view.dx, 0);
+	assert.ok(Math.abs(view.dy * 2 + view.height * view.scale - view.height) < 1e-9);
+	view.zoom(.1);
+	assert.equal(view.scale, view.fitScale());
+});
+
+test('every genre has a complete two-bar pattern with playable pitches and drum hits on the grid', () => {
 	assert.deepEqual(Object.keys(patternScores).sort(), catalog.genres.map(genre => genre.id).sort());
 	for (const score of Object.values(patternScores)) {
 		assert.ok(score.name && score.guide);
@@ -242,6 +272,10 @@ test('every genre has a complete two-bar pattern with playable pitches and chord
 			assert.ok(line.some(Boolean));
 			assert.ok(line.every(note => Number.isInteger(note) && (note === 0 || note >= 21 && note <= 108)));
 		}
+		for (const hits of Object.values(patternDrums(score))) {
+			assert.ok(hits.length && hits.every(beat => beat >= 0 && beat < 8 && Number.isInteger(beat * 4)));
+			assert.deepEqual(hits, Array.from(new Set(hits)).sort((a, b) => a - b));
+		}
 		for (const [offset, length, ...pitches] of score.chords) {
 			assert.ok(offset >= 0 && length > 0 && offset + length <= 8);
 			assert.ok(pitches.length >= 2 && pitches.every(note => note >= 21 && note <= 108));
@@ -249,12 +283,15 @@ test('every genre has a complete two-bar pattern with playable pitches and chord
 	}
 });
 
-test('the scheduler plays a four-beat kick for club patterns and syncopates the break for drum and bass', () => {
+test('the scheduler distinguishes a straight kick, an offbeat kick and sliced breaks', () => {
 	const floor = [0, 1, 2, 3, 4, 5, 6, 7];
 	const backbeat = [1, 3, 5, 7];
 	for (const [id, kicks, snares] of [
 		['jazz', [0, 2, 4, 6], backbeat], ['disco', floor, backbeat], ['house', floor, backbeat],
-		['techno', floor, [3, 7]], ['dnb', [0, 2.5, 4, 5.75, 6.5], backbeat]
+		['techno', floor, [3, 7]], ['hiphop', [0, 2.5, 4, 6.5], backbeat],
+		['hardcore', floor, [1, 2.75, 3, 5, 6.5, 7]],
+		['jungle', [0, 1.75, 2.5, 4, 5.5, 6.75], [1, 2.25, 3, 3.5, 4.75, 5, 6.25, 7, 7.5]],
+		['dnb', [0, 2.5, 4, 5.75, 6.5], backbeat]
 	]) {
 		const player = Object.create(atlasAudio);
 		const score = patternScores[id];
@@ -266,6 +303,26 @@ test('the scheduler plays a four-beat kick for club patterns and syncopates the 
 		assert.equal(player.schedule(score), 8 * beat + .1);
 		assert.deepEqual(hits, [kicks, snares], id);
 	}
+});
+
+test('the Sound grid shows each scheduled kick and snare and describes offbeat counts', t => {
+	withProfileDeps(t);
+	const view = Object.create(profile);
+	for (const [id, score] of Object.entries(patternScores)) {
+		view.score = score;
+		const rows = Array.from(view.rhythm().matchAll(/<div class="rhythm-track">(.*?)<\/div>/g), match => match[1]);
+		assert.equal(rows.length, 4, id);
+		const { kicks, snares } = patternDrums(score);
+		for (const [i, row] of rows.entries()) {
+			const steps = Array.from(row.matchAll(/<i( class="is-hit")?><\/i>/g), match => Boolean(match[1]));
+			assert.equal(steps.length, 16, id);
+			const hits = i < 2 ? kicks : snares;
+			const start = i % 2 * 4;
+			assert.deepEqual(steps, Array.from({ length: 16 }, (_, step) => hits.includes(start + step / 4)), id);
+		}
+	}
+	view.score = patternScores.jungle;
+	assert.match(view.rhythm(), /role="img" aria-label="Bar 1: kick 1, 2 a, 3 and; snare 2, 3 e, 4, 4 and\. Bar 2: kick 1, 2 and, 3 a; snare 1 a, 2, 3 e, 4, 4 and\."/);
 });
 
 test('stopping while resuming cancels playback and active buses anchor their fade-out', async () => {

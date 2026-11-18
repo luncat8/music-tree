@@ -63,7 +63,7 @@ getObj().data().action()
 	js/catalog.js — genre graph, editorial records, family metadata and Wikipedia slugs.
 	js/marks.js — shared inline icon references and family swatches.
 	js/map.js — node layout, branch and influence links, filter and camera.
-	js/profile.js — typographic genre file, lineage links, reference links and transport display.
+	js/profile.js — genre file, lineage links, reference links, rhythm grid and transport display.
 	js/audio.js — two-bar studies, Web Audio scheduling and cancellation.
 	js/library.js — page navigation, index, keyboard search and field guide.
 	styles/atlas.css, explorer.css, library.css — page shell, workspace and browsing respectively.
@@ -138,9 +138,9 @@ getObj().data().action()
 
 ## current workstream
 
-- 0.2.2 models eighteen genres across five generations and three branches plus dashed cross-influences, typographic profile headers and optional Wikipedia references. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio when extending it.
-- `node --test experiments/atlas.test.cjs` checks local assets, graph integrity, generation depth, reference links, studies, cancellation and script integration.
-- Map columns and headings derive from catalog depth. Card widths and heights follow the measured column gaps and row spacing, so new generations do not need fixed layout or guide markup.
+- The atlas follows twenty genres and three branches, including the UK rave route into drum and bass. The Sound tab diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
+- `node --test experiments/atlas.test.cjs` checks assets, graph integrity, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
+- Map columns and headings derive from catalog depth. Cards fit the column gaps and row spacing. Keep camera viewport bounds separate from the minimum-width plane so new columns stay readable.
 
 ## housekeeping
 
