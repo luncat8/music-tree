@@ -2,7 +2,7 @@
 // edit for: repertoire, lineages, cross-influences, instruments and reference links
 const genreCatalog = {
 	wikiBase: 'https://en.wikipedia.org/wiki/',
-	generations: ['Origin', 'Branches', 'Styles', 'Offshoots'],
+	generations: ['Origin', 'Branches', 'Styles', 'Offshoots', 'Scenes'],
 	families: {
 		blues: { label: 'Blues', color: '#8cb8e7', glyph: 'disc' },
 		jazz: { label: 'Jazz', color: '#d2f78b', glyph: 'syncopation' },
@@ -17,6 +17,7 @@ const genreCatalog = {
 		Clavinet: 'Clavinet',
 		'Drum machine': 'Drum_machine',
 		Drums: 'Drum_kit',
+		'Effects pedals': 'Effects_unit',
 		'Electric bass': 'Bass_guitar',
 		'Electric guitar': 'Electric_guitar',
 		Guitar: 'Guitar',
@@ -29,6 +30,7 @@ const genreCatalog = {
 		Sampler: 'Sampler_(musical_instrument)',
 		Saxophone: 'Saxophone',
 		Saxophones: 'Saxophone',
+		Sequencer: 'Music_sequencer',
 		Strings: 'String_section',
 		Synthesizer: 'Synthesizer',
 		Trombone: 'Trombone',
@@ -102,7 +104,7 @@ const genreCatalog = {
 			study: { title: 'Rumble', wiki: 'Rumble_(instrumental)', artist: 'Link Wray', ensemble: 'and His Ray Men', artistWiki: 'Link_Wray', year: '1958', note: 'Let the chord hits ring and leave the deliberate gaps in the riff.' }
 		},
 		{
-			id: 'metal', name: 'Heavy metal', wiki: 'Heavy_metal_music', parent: 'rock', family: 'rock', date: 'Late 1960s', place: 'United Kingdom & US',
+			id: 'metal', name: 'Heavy metal', short: 'Metal', wiki: 'Heavy_metal_music', parent: 'rock', family: 'rock', date: 'Late 1960s', place: 'United Kingdom & US',
 			influences: [['blues', 'Stretched electric blues riffs and blue-note tension into slower, heavier distortion.']],
 			shift: 'Heavy metal pushed the amplified rock riff toward heavier distortion, darker intervals and sustained power chords. Guitar and bass often reinforce a single line.',
 			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Voice', 'Keyboards', 'Second guitar'], techniques: ['Power chords', 'Palm muting', 'Pedal tones'], traits: ['Distorted', 'Riff-led'],
@@ -110,7 +112,7 @@ const genreCatalog = {
 			study: { title: 'Iron Man', wiki: 'Iron_Man_(song)', artist: 'Black Sabbath', artistWiki: 'Black_Sabbath', year: '1970', note: 'Start with the main power-chord riff and match the duration of each chord.' }
 		},
 		{
-			id: 'punk', name: 'Punk rock', wiki: 'Punk_rock', parent: 'rock', influences: [], family: 'rock', date: '1970s', place: 'New York & London',
+			id: 'punk', name: 'Punk rock', short: 'Punk', wiki: 'Punk_rock', parent: 'rock', influences: [], family: 'rock', date: '1970s', place: 'New York & London',
 			shift: 'Punk stripped rock down to short songs, direct vocals and a hard, fast pulse. Repeated downstrokes give a small set of chords relentless momentum.',
 			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Second guitar', 'Backing vocals'], techniques: ['Downpicking', 'Power chords', 'Straight eighths'], traits: ['Fast', 'DIY'],
 			landmark: { title: 'Blitzkrieg Bop', wiki: 'Blitzkrieg_Bop', artist: 'Ramones', artistWiki: 'Ramones', year: '1976', note: 'The tight eighth notes leave very little space between the guitar and bass.' },
@@ -158,6 +160,41 @@ const genreCatalog = {
 			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Voice', 'Keyboards', 'Strings'], techniques: ['Loud-quiet dynamics', 'Alternate tunings', 'Jangle arpeggios'], traits: ['DIY', 'Riff-led'],
 			landmark: { title: 'Smells Like Teen Spirit', wiki: 'Smells_Like_Teen_Spirit', artist: 'Nirvana', artistWiki: 'Nirvana_(band)', year: '1991', note: 'Listen for the drop from a nearly whispered verse into a shouted four-chord chorus.' },
 			study: { title: 'Losing My Religion', wiki: 'Losing_My_Religion', artist: 'R.E.M.', artistWiki: 'R.E.M.', year: '1991', note: 'Keep the mandolin figure even and quiet; the song depends on restraint rather than volume.' }
+		},
+		{
+			id: 'house', name: 'House', aliases: ['house music', 'chicago house'], wiki: 'House_music', parent: 'disco', family: 'rhythm', date: 'Early 1980s', place: 'Chicago, US',
+			influences: [['soul', 'Gospel-inflected soul vocals and warm keyboard chords carried into Chicago’s club tracks.']],
+			shift: 'In Chicago’s Black, Latino and queer club scenes, DJs stretched and blended disco records for dancers. Producers kept the steady kick but rebuilt the groove with drum machines, repeating bass lines and keyboard stabs.',
+			core: ['Drum machine', 'Synthesizer', 'Keys'], optional: ['Sampler', 'Voice', 'Turntables'], techniques: ['Four-on-the-floor', 'Offbeat chords', 'Loop layering'], traits: ['Club music', 'Groove-led'],
+			landmark: { title: 'Move Your Body', wiki: 'Move_Your_Body_(Marshall_Jefferson_song)', artist: 'Marshall Jefferson', artistWiki: 'Marshall_Jefferson', year: '1986', note: 'Hear how the bright piano chords pull against the unchanging kick.' },
+			study: { title: 'Can You Feel It', wiki: 'Can_You_Feel_It_(Larry_Heard_song)', artist: 'Mr. Fingers', artistWiki: 'Larry_Heard', year: '1986', note: 'Start with the repeating synth bass. Add the held chords without speeding up the pulse.' }
+		},
+		{
+			id: 'techno', name: 'Techno', aliases: ['detroit techno'], wiki: 'Techno', parent: 'disco', family: 'rhythm', date: 'Mid-1980s', place: 'Detroit, US',
+			influences: [
+				['hiphop', 'Early electro and hip-hop shared drum-machine rhythms and synth bass with the records made by Detroit pioneers.'],
+				['house', 'Detroit producers heard Chicago house in clubs and on records, shaping how they built and paced tracks for dancers.']
+			],
+			shift: 'Black Detroit producers combined the pulse of club records with funk and European electronic music. Repeating sequences let small changes in percussion and synth tone carry a track without a verse or chorus.',
+			core: ['Drum machine', 'Synthesizer', 'Sequencer'], optional: ['Sampler', 'Keys'], techniques: ['Step sequencing', 'Filter sweeps', 'Layered percussion'], traits: ['Electronic', 'Repetitive'],
+			landmark: { title: 'No UFO’s', wiki: 'No_UFO%27s', artist: 'Model 500', artistWiki: 'Juan_Atkins', year: '1985', note: 'Listen for the clipped synth bass and machine percussion underneath the processed voice.' },
+			study: { title: 'Strings of Life', wiki: 'Strings_of_Life', artist: 'Rhythim Is Rhythim', artistWiki: 'Derrick_May_(musician)', year: '1987', note: 'Tap a steady pulse while you learn the syncopated piano figure.' }
+		},
+		{
+			id: 'dnb', name: 'Drum and bass', short: 'DnB', aliases: ['drum & bass', 'd&b', 'd’n’b', "d'n'b", 'jungle'], wiki: 'Drum_and_bass', parent: 'hiphop', family: 'rhythm', date: 'Early 1990s', place: 'United Kingdom',
+			influences: [['funk', 'Funk records supplied drum breaks that jungle producers sped up and cut into new rhythms.']],
+			shift: 'Drum and bass grew out of UK breakbeat hardcore and jungle, taking hip-hop’s breakbeat sampling to rave tempos. Deep bass owed as much to Jamaican sound-system culture as the drums did to sampled records.',
+			core: ['Sampler', 'Synthesizer', 'Sequencer'], optional: ['Drum machine', 'Voice', 'Upright bass'], techniques: ['Break slicing', 'Sub-bass programming', 'Double-time drums'], traits: ['Breakbeat', 'Bass-heavy'],
+			landmark: { title: 'Inner City Life', wiki: 'Inner_City_Life', artist: 'Goldie', ensemble: 'featuring Diane Charlemagne', artistWiki: 'Goldie', year: '1994', note: 'Follow the quick edits in the drums while the voice stretches across them.' },
+			study: { title: 'Brown Paper Bag', artist: 'Roni Size', ensemble: 'with Reprazent', artistWiki: 'Roni_Size', year: '1997', note: 'Learn the upright bass figure slowly, then keep it steady against the fast breakbeat.' }
+		},
+		{
+			id: 'grunge', name: 'Grunge', aliases: ['seattle sound'], wiki: 'Grunge', parent: 'altrock', family: 'rock', date: 'Mid-1980s', place: 'Pacific Northwest, US',
+			influences: [['metal', 'Heavy metal gave many Seattle bands their slow, low riffs and thick guitar distortion.']],
+			shift: 'In the Pacific Northwest, independent bands mixed punk’s direct attack with the weight of metal. Murky guitar tones, raw vocals and abrupt changes in volume made forceful riffs feel unsettled.',
+			core: ['Electric guitar', 'Bass guitar', 'Drums', 'Voice'], optional: ['Effects pedals', 'Backing vocals'], techniques: ['Drop D tuning', 'Fuzz guitar', 'Loud-quiet dynamics'], traits: ['Distorted', 'Riff-led'],
+			landmark: { title: 'Outshined', wiki: 'Outshined', artist: 'Soundgarden', artistWiki: 'Soundgarden', year: '1991', note: 'Count seven beats in the verse riff, then hear it give way to the square pulse of the chorus.' },
+			study: { title: 'Come as You Are', wiki: 'Come_as_You_Are_(Nirvana_song)', artist: 'Nirvana', artistWiki: 'Nirvana_(band)', year: '1992', note: 'Learn the two-string riff without effects first, then add a chorus pedal for the wavering sound.' }
 		}
 	],
 	get(id) {
@@ -180,10 +217,19 @@ const genreCatalog = {
 	},
 	search(query) {
 		const words = query.toLowerCase().trim().split(/\s+/);
-		return this.genres.filter(genre => {
-			const text = [genre.name, genre.short, genre.id, ...(genre.aliases || []), this.families[genre.family].label, genre.date, genre.place, ...genre.core, ...genre.optional, ...genre.techniques, ...genre.traits, ...this.pieceTerms(genre.landmark), ...this.pieceTerms(genre.study)].join(' ').toLowerCase();
-			return words.every(word => text.includes(word));
-		});
+		const phrase = words.join(' ');
+		const exact = [];
+		const related = [];
+		for (const genre of this.genres) {
+			const names = [genre.name, genre.short, genre.id, ...(genre.aliases || [])];
+			if (names.some(name => name?.toLowerCase() === phrase)) {
+				exact.push(genre);
+				continue;
+			}
+			const text = [...names, this.families[genre.family].label, genre.date, genre.place, ...genre.core, ...genre.optional, ...genre.techniques, ...genre.traits, ...this.pieceTerms(genre.landmark), ...this.pieceTerms(genre.study)].join(' ').toLowerCase();
+			if (words.every(word => text.includes(word))) related.push(genre);
+		}
+		return exact.concat(related);
 	}
 };
 

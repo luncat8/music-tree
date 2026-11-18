@@ -1,5 +1,7 @@
 // owns: original two-bar studies, synthesis and transport lifecycle
 // edit for: rhythms, voicings, timbres and playback
+const backbeatDrums = { kicks: [0, 2, 4, 6], snares: [1, 3, 5, 7] };
+const floorDrums = { ...backbeatDrums, kicks: [0, 1, 2, 3, 4, 5, 6, 7] };
 const patternScores = {
 	blues: {
 		name: 'E shuffle', bpm: 92, swing: true, voice: 'triangle',
@@ -62,7 +64,7 @@ const patternScores = {
 		chords: [[0, .7, 45, 52], [2, .7, 45, 52], [4, .7, 50, 57], [6, .7, 52, 59]]
 	},
 	disco: {
-		name: 'Four-on-the-floor', bpm: 118, swing: false, voice: 'triangle',
+		name: 'Four-on-the-floor', bpm: 118, swing: false, voice: 'triangle', drums: floorDrums,
 		guide: 'A D minor groove with a kick on every beat. An octave bass pushes the pulse while short string stabs answer on the offbeats.',
 		lead: [0, 69, 0, 74, 0, 69, 0, 72, 0, 69, 0, 74, 76, 0, 74, 72], bass: [38, 50, 38, 50, 41, 53, 41, 53, 43, 55, 43, 55, 45, 57, 45, 57],
 		chords: [[1, .28, 62, 65, 69, 72], [3, .28, 62, 65, 69, 72], [5, .28, 65, 69, 72, 76], [7, .28, 65, 69, 72, 76]]
@@ -84,6 +86,30 @@ const patternScores = {
 		guide: 'A bare guitar figure opens into a full four-chord chorus. The verse stays thin and quiet so the loud section hits harder.',
 		lead: [52, 0, 52, 0, 55, 0, 52, 0, 59, 59, 59, 59, 57, 57, 55, 52], bass: [28, 0, 28, 0, 33, 0, 28, 0, 35, 35, 35, 35, 33, 33, 31, 28],
 		chords: [[0, .7, 40, 47], [2, .7, 45, 52], [4, .8, 47, 54], [6, .8, 45, 52]]
+	},
+	house: {
+		name: 'Offbeat piano', bpm: 122, swing: false, voice: 'triangle', drums: floorDrums,
+		guide: 'A kick marks each beat while C minor seventh chords stab on the offbeats. Listen for the bass notes that answer the keys.',
+		lead: [0, 0, 0, 67, 0, 70, 0, 0, 0, 0, 0, 67, 0, 72, 70, 0], bass: [36, 0, 36, 48, 0, 36, 43, 0, 36, 0, 36, 48, 0, 36, 46, 43],
+		chords: [[.5, .28, 60, 63, 67, 70], [1.5, .22, 60, 63, 67, 70], [3.5, .28, 60, 63, 67, 70], [4.5, .28, 60, 63, 67, 70], [5.5, .22, 60, 63, 67, 70], [7.5, .28, 60, 63, 67, 70]]
+	},
+	techno: {
+		name: 'Sequenced pulse', bpm: 132, swing: false, voice: 'square', drums: { ...floorDrums, snares: [3, 7] },
+		guide: 'A constant kick sets the grid for a clipped synth sequence. The bass stays on one note while a few high stabs shift the accents.',
+		lead: [58, 0, 58, 65, 0, 58, 61, 0, 58, 0, 58, 65, 0, 58, 63, 0], bass: [0, 34, 0, 34, 0, 34, 0, 34, 0, 34, 0, 34, 0, 34, 0, 34],
+		chords: [[2.75, .16, 61, 66], [6.75, .16, 63, 65]]
+	},
+	dnb: {
+		name: 'Chopped break', bpm: 172, swing: false, voice: 'sine', drums: { kicks: [0, 2.5, 4, 5.75, 6.5], snares: [1, 3, 5, 7] },
+		guide: 'Kicks slip between the backbeats at 172 BPM. Count bass accents at half that speed while the opening chord hangs over the break.',
+		lead: [0, 0, 0, 0, 67, 0, 0, 70, 0, 0, 0, 0, 74, 0, 72, 0], bass: [31, 0, 0, 0, 31, 0, 0, 34, 31, 0, 0, 0, 37, 0, 0, 34],
+		chords: [[0, 1.6, 55, 58, 62, 69], [4, 1.6, 55, 58, 60, 65]]
+	},
+	grunge: {
+		name: 'Drop D weight', bpm: 112, swing: false, voice: 'sawtooth',
+		guide: 'A sparse guitar figure opens up into stacked power chords. Hear how the low D returns with the full band at the end.',
+		lead: [50, 0, 53, 0, 55, 53, 0, 0, 57, 57, 55, 55, 53, 53, 50, 50], bass: [26, 0, 0, 0, 29, 0, 0, 0, 33, 33, 31, 31, 29, 29, 26, 26],
+		chords: [[4, .85, 45, 52, 57], [5, .85, 43, 50, 55], [6, .85, 41, 48, 53], [7, .9, 38, 45, 50]]
 	}
 };
 
@@ -145,9 +171,11 @@ const atlasAudio = {
 			const when = start + (Math.floor(i / 2) + offbeat * (score.swing ? 2 / 3 : .5)) * beat;
 			this.tone(score.lead[i], when, beat * (offbeat ? .31 : .51), score.voice, .18, 2050);
 			this.tone(score.bass[i], when, beat * .65, 'triangle', .31, 660);
-			if (!offbeat) this.drum(when, i % 4 === 2);
 			this.rattle(when, offbeat ? .045 : .065, offbeat ? .04 : .058, 6200);
 		}
+		const { kicks, snares } = score.drums || backbeatDrums;
+		for (const offset of kicks) this.drum(start + offset * beat, false);
+		for (const offset of snares) this.drum(start + offset * beat, true);
 		for (const [offset, duration, ...notes] of score.chords) {
 			for (const pitch of notes) this.tone(pitch, start + offset * beat, duration * beat, score.voice, .085, 1450);
 		}

@@ -13,6 +13,20 @@ const profile = require('../js/profile.js');
 const base = path.join(__dirname, '..');
 const read = filename => fs.readFileSync(path.join(base, filename), 'utf8');
 const validWiki = slug => assert.match(slug, /^[A-Za-z0-9_.,():%-]+$/, `invalid wiki slug: ${slug}`);
+const depthOf = genre => {
+	let depth = 0;
+	for (let step = genre; step.parent; step = catalog.get(step.parent)) depth++;
+	return depth;
+};
+
+function withMarks(t) {
+	global.atlasIcon = atlasIcon;
+	global.atlasDot = atlasDot;
+	t.after(() => {
+		delete global.atlasIcon;
+		delete global.atlasDot;
+	});
+}
 
 test('the page composes classic scripts in one scope, with local assets and matched icon symbols', () => {
 	const html = read('index.html');
@@ -81,31 +95,31 @@ test('each profile reaches a single origin, separates secondary influences and s
 	assert.ok(catalog.influencedBy('funk').some(genre => genre.id === 'fusion'));
 });
 
-test('the fourth generation lands three levels below the origin and spans every family', () => {
-	const depthOf = genre => {
-		let depth = 0;
-		for (let step = genre; step.parent; step = catalog.get(step.parent)) depth++;
-		return depth;
-	};
-	const deepest = catalog.genres.filter(genre => depthOf(genre) === 3).map(genre => genre.id);
-	assert.deepEqual(deepest.sort(), ['altrock', 'disco', 'fusion', 'hiphop']);
-	const families = new Set(catalog.genres.map(genre => genre.family));
-	assert.deepEqual([...families].sort(), Object.keys(catalog.families).sort());
-	assert.equal(catalog.generations.length, 4);
-	for (const genre of catalog.genres) {
-		const influences = genre.influences.map(([source]) => catalog.get(source).family);
-		assert.ok(influences.every(family => catalog.families[family]), `${genre.id}: unknown influence family`);
+test('the fourth-generation offshoots lead to four new records in the fifth column', () => {
+	const offshoots = catalog.genres.filter(genre => depthOf(genre) === 3);
+	assert.deepEqual(offshoots.map(genre => genre.id).sort(), ['altrock', 'disco', 'fusion', 'hiphop']);
+	assert.deepEqual([...new Set(offshoots.map(genre => genre.family))].sort(), ['jazz', 'rhythm', 'rock']);
+	const deepest = Math.max(...catalog.genres.map(depthOf));
+	assert.equal(deepest, 4);
+	assert.equal(catalog.generations.length, deepest + 1);
+	assert.equal(catalog.genres.length, 18);
+	const scenes = catalog.genres.filter(genre => depthOf(genre) === deepest);
+	assert.deepEqual(Object.fromEntries(scenes.map(genre => [genre.id, genre.parent])), {
+		house: 'disco', techno: 'disco', dnb: 'hiphop', grunge: 'altrock'
+	});
+	for (const genre of scenes) {
+		assert.equal(genre.family, catalog.get(genre.parent).family, `${genre.id} stays in its map branch`);
+		assert.ok(genre.wiki);
+		assert.ok(genre.influences.length, `${genre.id} credits additional influences`);
 	}
 	const crossingBranches = catalog.genres.flatMap(genre => genre.influences
 		.filter(([source]) => catalog.get(source).family !== genre.family)
 		.map(([source]) => `${genre.id}<-${source}`));
 	for (const arc of ['hiphop<-jazz', 'fusion<-rock', 'fusion<-funk', 'rock<-rhythm', 'funk<-jazz']) assert.ok(crossingBranches.includes(arc), arc);
 	assert.ok(catalog.get('altrock').influences.some(([source]) => source === 'metal'));
-	const deepestColumns = new Set(catalog.genres.filter(genre => depthOf(genre) === 3).map(genre => genre.family));
-	assert.ok(deepestColumns.size >= 3, 'the fourth generation spreads across branches');
 });
 
-test('Wikipedia links cover genres, instruments, artists and songs while omitting unavailable entries cleanly', () => {
+test('Wikipedia links cover genres, instruments, artists and songs while omitting unavailable entries cleanly', t => {
 	const usedInstruments = new Set();
 	for (const genre of catalog.genres) {
 		if (genre.wiki) validWiki(genre.wiki);
@@ -124,8 +138,7 @@ test('Wikipedia links cover genres, instruments, artists and songs while omittin
 	assert.equal(catalog.wikiUrl(''), '');
 	assert.equal(catalog.wikiUrl('Swing_music'), 'https://en.wikipedia.org/wiki/Swing_music');
 
-	global.atlasIcon = atlasIcon;
-	global.atlasDot = atlasDot;
+	withMarks(t);
 	const view = Object.create(profile);
 	view.catalog = catalog;
 	view.genre = catalog.get('metal');
@@ -150,8 +163,18 @@ test('Wikipedia links cover genres, instruments, artists and songs while omittin
 	const unlinked = view.piece('Study', { title: 'Untitled Etude', artist: 'Traditional', year: '1920', note: 'Practice slowly.' });
 	assert.ok(!unlinked.includes('<a '));
 	assert.match(unlinked, /Traditional · 1920/);
-	delete global.atlasIcon;
-	delete global.atlasDot;
+});
+
+test('Led to includes primary offshoots and influence-only paths without inventing successors', t => {
+	withMarks(t);
+	const view = Object.assign(Object.create(profile), { catalog });
+	assert.match(view.reach(catalog.get('disco')), /class="genre-chip" data-open="house"/);
+	assert.deepEqual(catalog.childrenOf('house'), []);
+	view.genre = catalog.get('house');
+	assert.match(view.overview(), /Led to<\/h4><div class="chip-row"><button type="button" class="genre-chip is-secondary" data-open="techno"/);
+	view.genre = catalog.get('techno');
+	assert.match(view.overview(), /Also shaped by[\s\S]*data-open="house"/);
+	assert.equal(view.reach(catalog.get('grunge')), '');
 });
 
 test('search composes terms across name, family, instrument, artist, piece, place and era', () => {
@@ -166,6 +189,9 @@ test('search composes terms across name, family, instrument, artist, piece, plac
 	assert.deepEqual(catalog.search('West End Blues').map(genre => genre.id), ['jazz']);
 	assert.deepEqual(catalog.search('Hot Five').map(genre => genre.id), ['jazz']);
 	assert.deepEqual(catalog.search('Charlie Parker').map(genre => genre.id), ['bebop']);
+	for (const [query, id] of [['chicago house', 'house'], ['detroit techno', 'techno'], [' DRUM   AND BASS ', 'dnb'], ['D&B', 'dnb'], ['Seattle sound', 'grunge']]) {
+		assert.equal(catalog.search(query)[0]?.id, id, `first hit for ${query}`);
+	}
 	assert.equal(catalog.search('').length, catalog.genres.length);
 	assert.equal(catalog.search('no such genre').length, 0);
 });
@@ -177,28 +203,32 @@ test('ancestor rows stay centered over visible leaves and trace ancestry across 
 		if (node.parent) node.parent.children.push(node);
 	}
 	const origin = records.get('blues');
-	assert.equal(map.measure(origin, 0), 7);
-	assert.equal(origin.unit, 3.5);
-	assert.equal(map.isAncestor(origin, records.get('bebop')), true);
+	assert.equal(map.measure(origin, 0), 8);
+	assert.equal(origin.unit, 4);
+	assert.equal(map.isAncestor(origin, records.get('dnb')), true);
 	assert.equal(map.isAncestor(records.get('jazz'), records.get('funk')), false);
-	assert.equal(records.get('hiphop').unit, 4.5);
-	assert.equal(records.get('altrock').unit, 6.5);
-	assert.equal(records.get('punk').unit, records.get('altrock').unit);
+	assert.equal(records.get('disco').unit, (records.get('house').unit + records.get('techno').unit) / 2);
+	assert.equal(records.get('hiphop').unit, records.get('dnb').unit);
+	assert.equal(records.get('punk').unit, records.get('grunge').unit);
 });
 
-test('generation columns span the widest depth and headings follow the catalog labels', () => {
-	const view = Object.create(map);
-	view.compact = false;
-	view.depth = 3;
-	view.computeColumns = map.computeColumns;
-	const columns = view.computeColumns();
-	assert.equal(columns.length, 4);
-	assert.ok(columns[0] > 0 && columns.at(-1) < 1);
-	for (let i = 1; i < columns.length; i++) assert.ok(columns[i] > columns[i - 1]);
-	const gaps = columns.slice(1).map((value, i) => value - columns[i]);
-	assert.ok(Math.max(...gaps) - Math.min(...gaps) < 1e-9, 'columns stay evenly spaced');
-	view.compact = true;
-	assert.ok(view.computeColumns()[0] > columns[0]);
+test('column geometry and guide headings follow the maximum depth in the catalog', t => {
+	const guides = [];
+	global.$ = () => ({ append: guide => guides.push(guide.innerHTML) });
+	global.document = { createElement: () => ({}) };
+	t.after(() => { delete global.$; delete global.document; });
+	const view = Object.assign(Object.create(map), { catalog, depth: Math.max(...catalog.genres.map(depthOf)) });
+	view.makeGuides();
+	assert.deepEqual(guides, catalog.generations.map((label, i) => `<b>0${i + 1}</b>${label}`));
+	for (const compact of [false, true]) {
+		view.compact = compact;
+		const columns = view.computeColumns();
+		assert.equal(columns.length, guides.length);
+		assert.ok(columns[0] > 0 && columns.at(-1) < 1);
+		const gaps = columns.slice(1).map((value, i) => value - columns[i]);
+		assert.ok(gaps.every(gap => gap > 0));
+		assert.ok(Math.max(...gaps) - Math.min(...gaps) < 1e-9, 'columns stay evenly spaced');
+	}
 });
 
 test('every genre has a complete two-bar pattern with playable pitches and chord lengths', () => {
@@ -216,6 +246,25 @@ test('every genre has a complete two-bar pattern with playable pitches and chord
 			assert.ok(offset >= 0 && length > 0 && offset + length <= 8);
 			assert.ok(pitches.length >= 2 && pitches.every(note => note >= 21 && note <= 108));
 		}
+	}
+});
+
+test('the scheduler plays a four-beat kick for club patterns and syncopates the break for drum and bass', () => {
+	const floor = [0, 1, 2, 3, 4, 5, 6, 7];
+	const backbeat = [1, 3, 5, 7];
+	for (const [id, kicks, snares] of [
+		['jazz', [0, 2, 4, 6], backbeat], ['disco', floor, backbeat], ['house', floor, backbeat],
+		['techno', floor, [3, 7]], ['dnb', [0, 2.5, 4, 5.75, 6.5], backbeat]
+	]) {
+		const player = Object.create(atlasAudio);
+		const score = patternScores[id];
+		const beat = 60 / score.bpm;
+		const hits = [[], []];
+		player.context = { currentTime: 0, createGain: () => ({ gain: {}, connect() {} }) };
+		player.tone = player.rattle = () => {};
+		player.drum = (time, snare) => hits[Number(snare)].push(Math.round((time - .035) / beat * 100) / 100);
+		assert.equal(player.schedule(score), 8 * beat + .1);
+		assert.deepEqual(hits, [kicks, snares], id);
 	}
 });
 

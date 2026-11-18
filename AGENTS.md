@@ -21,7 +21,7 @@ const $ = id => document.getElementById(id);
 - no banners, no commented-out code, no TODOs in code — that goes to plan or findings instead.
 
 good:
-	// 2x step: halves samples, still >60fps (plan 0.3, log 11-02)
+	// 2x step: halves samples, still >60fps (plan 0.2.1, log 11-02)
 not good:
 	// increment i
 	// loop over items
@@ -107,7 +107,7 @@ getObj().data().action()
 
 - experiments/ — node measurement scripts, never loaded by the page.
 - logs are machine format: fixed keys, fixed units, one line per metric.
-	fps_pre=58 fps_post=61 step=2x plan=0.3
+	fps_pre=58 fps_post=61 step=2x plan=0.2.1
 	a log a human must parse is a defect.
 - comparison = a ~15-line node script: diff two logs by key, flag |delta| > 5%. conclusion (1 sentence + numbers) -> findings, raw stays in logs.
 - keep only runs that produced a decision. prune the rest when the plan closes.
@@ -138,9 +138,9 @@ getObj().data().action()
 
 ## current workstream
 
-- 0.3.0 models fourteen genres across four generations and three branches plus dashed cross-influences, typographic profile headers and optional Wikipedia reference links for genres, instruments, artists and pieces; genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio when extending it.
+- 0.2.2 models eighteen genres across five generations and three branches plus dashed cross-influences, typographic profile headers and optional Wikipedia references. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio when extending it.
 - `node --test experiments/atlas.test.cjs` checks local assets, graph integrity, generation depth, reference links, studies, cancellation and script integration.
-- Map columns and generation headings derive from catalog depth (`generations` labels and the deepest parent chain); add a generation by extending the catalog only.
+- Map columns and headings derive from catalog depth. Card widths and heights follow the measured column gaps and row spacing, so new generations do not need fixed layout or guide markup.
 
 ## housekeeping
 

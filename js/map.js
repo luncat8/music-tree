@@ -120,7 +120,7 @@ const lineageMap = {
 		const changed = width !== this.width || height !== this.height;
 		this.width = width;
 		this.height = height;
-		this.compact = width < 540;
+		this.compact = width / Math.max(1, this.depth) < 216;
 		this.stage.classList.toggle('is-compact', this.compact);
 		this.columns = this.computeColumns();
 		let count = 0;
@@ -133,7 +133,10 @@ const lineageMap = {
 		const inset = this.compact ? 39 : 45;
 		const step = (height - inset - 54) / slots;
 		const span = this.depth ? width * (this.columns[this.depth] - this.columns[0]) / this.depth : width * .3;
-		const nodeWidth = Math.min(155, Math.max(58, span - (this.compact ? 18 : 26)));
+		const gap = this.compact ? Math.min(18, span * .17) : 26;
+		const nodeWidth = Math.min(155, span - gap);
+		this.stage.classList.toggle('is-tight', nodeWidth < 80);
+		this.stage.style.setProperty('--node-height', `${step - 4}px`);
 		for (const node of this.nodes) {
 			if (!node.visible) continue;
 			node.x = width * this.columns[node.depth];
@@ -161,10 +164,9 @@ const lineageMap = {
 		if (changed) this.fit();
 	},
 	computeColumns() {
-		const first = this.compact ? .15 : .145;
-		const last = this.compact ? .85 : .855;
+		const inset = this.compact ? .115 : .145;
 		const columns = new Array(this.depth + 1);
-		for (let i = 0; i < columns.length; i++) columns[i] = first + (last - first) * (columns.length === 1 ? 0 : i / (columns.length - 1));
+		for (let i = 0; i < columns.length; i++) columns[i] = inset + (1 - 2 * inset) * i / Math.max(1, this.depth);
 		return columns;
 	},
 	draw() {
