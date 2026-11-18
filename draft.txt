@@ -1,0 +1,18 @@
+music-tree
+tree of music
+what need to include
+how organize
+example
+------
+i think main should be
+- what next differ from parent: example - new instrument invented - piano
+then
+- what instruments are main, what addition (i.e. jazz cap play on brass and bass, but can add violin and drum. metal we can play on single string typically guitar string, but can add any other instruments, typically few guitars, keys, drums)
+- key techniques: legato, djent, granular synthesis
+- typical note or chord pattern if any. (generator to play it).
+- addition attributes: christian, Japanese, unplugged, etc
+- date of founded: 15ct, 1990x
+- most notable example composition name (band can play different genres so without song name it is useless)
+- what composition worth to learn as start to med level, so if know how to play this you can say i can play this genre
+
+
