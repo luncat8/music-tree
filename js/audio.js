@@ -12,6 +12,12 @@ const patternScores = {
 		lead: [0, 64, 67, 69, 0, 67, 64, 0, 0, 64, 67, 70, 69, 67, 64, 0], bass: [40, 47, 40, 49, 40, 47, 40, 49, 40, 47, 40, 49, 40, 47, 40, 49],
 		chords: [[0, .8, 52, 59], [2, .7, 52, 61], [4, .8, 52, 59], [6, .7, 52, 61]]
 	},
+	chicagoblues: {
+		name: 'Stop-time answer', bpm: 96, swing: true, voice: 'sawtooth',
+		guide: 'Count through the space after each band hit. A short treble answer enters late in the bar while the quieter subdivision keeps swinging.',
+		lead: [0, 0, 0, 0, 0, 67, 69, 70, 0, 0, 0, 0, 69, 67, 64, 0], bass: [40, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0],
+		drums: { kicks: [0, 4], snares: [0, 4] }, chords: [[0, .4, 52, 56, 62], [4, .4, 52, 56, 62]]
+	},
 	jazz: {
 		name: 'Swung ii–V–I', bpm: 120, swing: true, voice: 'triangle',
 		guide: 'Dm7 and G7 resolve to Cmaj7. A walking bass marks the quarter notes while the treble leans into the late half of each swung pair.',
@@ -337,9 +343,9 @@ const atlasAudio = {
 		noise.buffer = this.noise;
 		this.envelope(noise, when, length, volume, cutoff, 'highpass');
 	},
-	schedule(score) {
+	schedule(score, bpm = score.bpm) {
 		const ctx = this.context;
-		const beat = 60 / score.bpm;
+		const beat = 60 / bpm;
 		const start = ctx.currentTime + .035;
 		this.bus = ctx.createGain();
 		this.bus.gain.value = .48;
@@ -359,7 +365,7 @@ const atlasAudio = {
 		}
 		return 8 * beat + .1;
 	},
-	async toggle(id) {
+	async toggle(id, bpm) {
 		if (this.active) return this.stop();
 		const ticket = ++this.ticket;
 		this.active = true;
@@ -367,7 +373,7 @@ const atlasAudio = {
 			this.prepare();
 			if (this.context.state !== 'running') await this.context.resume();
 			if (ticket !== this.ticket) return;
-			const seconds = this.schedule(patternScores[id]);
+			const seconds = this.schedule(patternScores[id], bpm);
 			this.notify('playing');
 			this.timer = setTimeout(() => this.stop(), seconds * 1000);
 		} catch {

@@ -122,6 +122,7 @@
 .piece-title .wiki-inline .icon { width: 13px; height: 13px; }
 .wiki-inline:hover { color: var(--tone); text-decoration-color: currentColor; }
 .wiki-inline:hover .icon { color: currentColor; }
+.practice-tempo { display: flex; align-items: center; gap: .4rem; margin-bottom: .4rem; font-size: .8rem; }
 .player-well { padding: 14px 16px 16px; flex: none; }
 .pattern-player { display: flex; align-items: center; gap: 11px; width: 100%; min-height: 58px; padding: 10px 12px; background: #242923; border: 1px solid #3b4534; border-radius: 7px; text-align: left; }
 .pattern-player:hover { background: #2c3328; border-color: #59684a; }

@@ -139,7 +139,7 @@ getObj().data().action()
 
 ## current workstream
 
-- The atlas follows 43 genres from six starting points: Blues, Jazz, Mento, Country, Son cubano and Danzón. Each branch filter keeps the selected family and its primary ancestors. Profile tabs stay selected across genre changes. Sound diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
+- The atlas follows 44 genres from six starting points: Blues, Jazz, Mento, Country, Son cubano and Danzón. Each branch filter keeps the selected family and its primary ancestors. Profile tabs stay selected across genre changes. Sound diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
 - `node --test experiments/*.test.cjs` checks assets, graph integrity, lineage completeness and numbering, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
 - Records live in `js/lineages/*.js`, one per family, each carrying its `file` slot. Append a branch there; `js/catalog.js` only composes and never holds records.
 - Map columns and headings derive from catalog depth. Cards fit the column gaps and row spacing; a long label shrinks to its card rather than wrapping, so card height stays fixed. Keep camera viewport bounds separate from the minimum-width plane so new columns stay readable.

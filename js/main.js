@@ -21,7 +21,7 @@ function jumpToAtlasGenre(id) {
 function bootAtlas() {
 	for (const lineages of [bluesLineage, jazzLineage, rhythmLineage, rockLineage, jamaicanLineage, countryLineage, afrocubanLineage]) genreCatalog.addLineage(lineages);
 	genreCatalog.publish();
-	genreProfile.init(genreCatalog, selectAtlasGenre, () => atlasAudio.toggle(root.genre.id), () => lineageMap.focus());
+	genreProfile.init(genreCatalog, selectAtlasGenre, () => atlasAudio.toggle(root.genre.id, genreProfile.bpm), () => lineageMap.focus(), () => atlasAudio.stop());
 	atlasAudio.init(state => genreProfile.transport(state));
 	lineageMap.init(genreCatalog, selectAtlasGenre);
 	atlasLibrary.init(genreCatalog, jumpToAtlasGenre, () => atlasAudio.stop());

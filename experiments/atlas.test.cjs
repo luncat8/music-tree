@@ -134,7 +134,7 @@ test('the atlas keeps its offshoots and traces the UK rave route as primary line
 test('the Kingston files trace the mento route to dub and connect it to jungle', () => {
 	const ids = ['ska', 'rocksteady', 'reggae', 'dub'];
 	const route = ids.map(id => catalog.get(id));
-	assert.equal(catalog.genres.length, 43);
+	assert.equal(catalog.genres.length, 44);
 	assert.deepEqual(route.map(genre => genre.parent), ['mento', 'ska', 'rocksteady', 'reggae']);
 	assert.ok(route.every(genre => genre.family === 'mento'));
 	assert.deepEqual(route.map(genre => catalog.number(genre)), ['021', '022', '023', '024']);
@@ -231,7 +231,7 @@ test('selecting a genre renders its file in the active tab with a matching tab s
 	t.after(() => { delete global.$; });
 	const tabs = ['overview', 'sound', 'listening'].map(tab => ({ ...element(), dataset: { tab }, focus() {} }));
 	const view = Object.assign(Object.create(profile), {
-		catalog, tabs, page: element(), wiki: element(), player: element(), panel: { style: { setProperty() {} } }
+		catalog, tabs, practice: { checked: false }, page: element(), wiki: element(), player: element(), panel: { style: { setProperty() {} } }
 	});
 	const checkFile = (id, tab, text) => {
 		view.show(catalog.get(id), patternScores[id]);
@@ -244,8 +244,11 @@ test('selecting a genre renders its file in the active tab with a matching tab s
 		}
 	};
 	checkFile('jazz', 'overview', catalog.get('jazz').shift);
+	assert.equal(view.bpm, patternScores.jazz.bpm);
+	view.practice.checked = true;
 	view.openTab('sound');
 	checkFile('reggae', 'sound', patternScores.reggae.guide);
+	assert.equal(view.bpm, patternScores.reggae.bpm * .75);
 	checkFile('dub', 'sound', patternScores.dub.guide);
 	view.tabKey({ key: 'End', preventDefault() {} }, 1);
 	checkFile('rocksteady', 'listening', catalog.get('rocksteady').landmark.title);
@@ -410,6 +413,7 @@ test('the scheduler distinguishes straight kicks, offbeat kicks, sliced breaks a
 		player.drum = (time, snare) => hits[Number(snare)].push(Math.round((time - .035) / beat * 100) / 100);
 		assert.equal(player.schedule(score), 8 * beat + .1);
 		assert.deepEqual(hits, [kicks, snares], id);
+		assert.equal(player.schedule(score, score.bpm * .75), 8 * (60 / (score.bpm * .75)) + .1);
 	}
 });
 

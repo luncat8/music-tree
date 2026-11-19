@@ -2,12 +2,17 @@
 // edit for: profile tabs, rhythm diagrams, Wikipedia links and player feedback
 const genreProfile = {
 	activeTab: 'overview',
-	init(catalog, choose, toggle, backToMap) {
+	init(catalog, choose, toggle, backToMap, stop) {
 		this.catalog = catalog;
 		this.panel = $('profile-region');
 		this.page = $('profile-page');
 		this.wiki = $('genre-wiki');
 		this.player = $('pattern-toggle');
+		this.practice = $('practice-tempo');
+		this.practice.addEventListener('change', () => {
+			stop();
+			this.updateTempo();
+		});
 		this.tabs = Array.from(this.panel.querySelectorAll('[role="tab"]'));
 		this.player.addEventListener('click', toggle);
 		$('return-map').addEventListener('click', backToMap);
@@ -46,10 +51,14 @@ const genreProfile = {
 		}
 		$('genre-date').textContent = genre.date;
 		$('genre-place').textContent = genre.place;
-		$('play-meta').textContent = `${score.name} · ${score.bpm} BPM`;
+		this.updateTempo();
 		this.makeWave(score);
 		this.transport('idle');
 		this.openTab(this.activeTab);
+	},
+	updateTempo() {
+		this.bpm = this.score.bpm * (this.practice.checked ? .75 : 1);
+		$('play-meta').textContent = `${this.score.name} · ${this.bpm} BPM`;
 	},
 	makeWave(score) {
 		let path = '';
