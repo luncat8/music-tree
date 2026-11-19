@@ -25,6 +25,7 @@ const lineageMap = {
 	},
 	makeNodes() {
 		this.depth = 0;
+		this.roots = [];
 		for (const genre of this.catalog.genres) {
 			const node = { genre, children: [], button: document.createElement('button'), x: 0, y: 0, width: 0, height: 0, unit: 0, visible: true };
 			this.nodes.push(node);
@@ -33,13 +34,13 @@ const lineageMap = {
 		for (const node of this.nodes) {
 			node.parent = this.byId.get(node.genre.parent);
 			if (node.parent) node.parent.children.push(node);
-			else this.origin = node;
+			else this.roots.push(node);
 			for (const [sourceId] of node.genre.influences) {
 				const source = this.byId.get(sourceId);
 				if (source) this.links.push({ source, target: node });
 			}
 		}
-		this.decorateNode(this.origin, 0);
+		for (const node of this.roots) this.decorateNode(node, 0);
 	},
 	decorateNode(node, depth) {
 		const { genre, button, children } = node;
@@ -78,7 +79,7 @@ const lineageMap = {
 			item.dataset.family = id;
 			item.innerHTML = `${atlasDot(family.color)}${family.label}`;
 			items.append(item);
-			if (id !== this.origin.genre.family) this.picker.add(new Option(family.label, id));
+			this.picker.add(new Option(family.label, id));
 		}
 		this.influenceKey = document.createElement('span');
 		this.influenceKey.className = 'key-item is-edge';
@@ -90,10 +91,10 @@ const lineageMap = {
 		this.branch = id;
 		this.picker.value = id;
 		this.layout();
-		if (id !== 'all') this.choose(id, false);
+		if (id !== 'all') this.choose((this.byId.get(id) || this.nodes.find(node => node.genre.family === id)).genre.id, false);
 	},
 	select(genre) {
-		if (this.branch !== 'all' && genre.parent && genre.family !== this.branch) this.filter('all');
+		if (this.branch !== 'all' && !this.byId.get(genre.id).visible) this.filter('all');
 		this.current = this.byId.get(genre.id);
 		for (const node of this.nodes) {
 			const picked = node === this.current;
@@ -117,6 +118,18 @@ const lineageMap = {
 		node.unit = first + span / 2;
 		return span;
 	},
+	markVisible() {
+		for (const node of this.nodes) node.visible = false;
+		for (const node of this.nodes) {
+			if (this.branch !== 'all' && node.genre.family !== this.branch) continue;
+			for (let step = node; step && !step.visible; step = step.parent) step.visible = true;
+		}
+	},
+	measureForest() {
+		let slots = 0;
+		for (const node of this.roots) slots += this.measure(node, slots);
+		return slots;
+	},
 	layout() {
 		const viewWidth = this.stage.clientWidth;
 		const height = this.stage.clientHeight;
@@ -131,13 +144,13 @@ const lineageMap = {
 		this.compact = width / Math.max(1, this.depth) < 216;
 		this.stage.classList.toggle('is-compact', this.compact);
 		this.columns = this.computeColumns();
+		this.markVisible();
 		let count = 0;
 		for (const node of this.nodes) {
-			node.visible = this.branch === 'all' || node === this.origin || node.genre.family === this.branch;
 			node.button.hidden = !node.visible;
 			if (node.visible) count++;
 		}
-		const slots = this.measure(this.origin, 0);
+		const slots = this.measureForest();
 		const inset = this.compact ? 39 : 45;
 		const step = (height - inset - 54) / slots;
 		const span = this.depth ? width * (this.columns[this.depth] - this.columns[0]) / this.depth : width * .3;
@@ -153,13 +166,15 @@ const lineageMap = {
 			node.button.style.left = `${node.x}px`;
 			node.button.style.top = `${node.y}px`;
 			node.button.style.width = `${node.width}px`;
-			node.height = node.button.offsetHeight || (this.compact ? 42 : 52);
+			// A fixed slot keeps cards aligned even if a label ever outgrows its card.
+			node.height = node.button.offsetHeight;
+			this.fitLabel(node);
 		}
 		for (let i = 0; i < this.columns.length; i++) this.guides[i].style.left = `${this.columns[i] * 100}%`;
 		for (const item of this.keyItems) {
 			const family = item.dataset.family;
 			if (!family) continue;
-			item.classList.toggle('is-muted', this.branch !== 'all' && family !== this.branch && family !== this.origin.genre.family);
+			item.classList.toggle('is-muted', !this.nodes.some(node => node.visible && node.genre.family === family));
 		}
 		const hasInfluence = this.links.some(link => link.source.visible && link.target.visible);
 		this.influenceKey.classList.toggle('is-muted', !hasInfluence);
@@ -171,6 +186,15 @@ const lineageMap = {
 		this.draw();
 		if (changed) this.setCamera(1);
 		this.revealNode(this.current);
+	},
+	// Narrow cards shrink a long name rather than wrapping it into the next row.
+	fitLabel(node) {
+		const name = node.button.firstElementChild.nextElementSibling.firstElementChild;
+		name.style.fontSize = '';
+		const room = node.button.clientWidth - name.offsetLeft - 9;
+		if (room <= 0 || name.scrollWidth <= room) return;
+		const size = parseFloat(getComputedStyle(name).fontSize) * room / name.scrollWidth;
+		name.style.fontSize = `${Math.max(8, size).toFixed(2)}px`;
 	},
 	computeColumns() {
 		const inset = this.compact ? .115 : .145;

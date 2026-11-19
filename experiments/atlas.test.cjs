@@ -58,9 +58,12 @@ test('the page composes classic scripts in one scope, with local assets and matc
 	for (const id of symbols) assert.ok(used.has(id), `unused symbol ${id}`);
 });
 
-test('each profile reaches a single origin, separates secondary influences and supplies both pieces', () => {
+test('each profile reaches one of the atlas roots, separates secondary influences and supplies both pieces', () => {
 	const origins = catalog.genres.filter(genre => !genre.parent);
-	assert.equal(origins.length, 1);
+	assert.deepEqual(origins.map(genre => genre.id), ['blues', 'jazz', 'mento', 'country', 'son']);
+	assert.equal(catalog.get('bluegrass').parent, 'country');
+	assert.equal(catalog.get('salsa').parent, 'son');
+	assert.ok(catalog.influencedBy('blues').includes(catalog.get('jazz')));
 	assert.equal(new Set(catalog.genres.map(genre => genre.id)).size, catalog.genres.length);
 	for (const genre of catalog.genres) {
 		const visited = new Set();
@@ -71,7 +74,7 @@ test('each profile reaches a single origin, separates secondary influences and s
 			ancestor = catalog.get(ancestor.parent);
 			assert.ok(ancestor, `missing parent for ${genre.id}`);
 		}
-		assert.equal(ancestor, origins[0]);
+		assert.ok(origins.includes(ancestor));
 		assert.ok(catalog.families[genre.family] && !('plate' in catalog.families[genre.family]));
 		for (const key of ['date', 'place', 'shift', 'core', 'optional', 'techniques', 'traits']) assert.ok(genre[key].length, `${genre.id}: ${key}`);
 		const seenInfluences = new Set();
@@ -98,10 +101,16 @@ test('each profile reaches a single origin, separates secondary influences and s
 });
 
 test('the atlas keeps its offshoots and traces the UK rave route as primary lineage', () => {
-	for (const id of ['altrock', 'disco', 'fusion', 'hiphop']) assert.equal(depthOf(catalog.get(id)), 3, id);
+	for (const id of ['altrock', 'disco', 'hiphop']) assert.equal(depthOf(catalog.get(id)), 3, id);
+	assert.equal(depthOf(catalog.get('fusion')), 2);
 	const deepest = Math.max(...catalog.genres.map(depthOf));
-	assert.equal(deepest, 7);
-	assert.equal(catalog.generations.length, deepest + 1);
+	assert.equal(depthOf(catalog.get('dnb')), 7);
+	assert.equal(deepest, 8);
+	assert.equal(depthOf(catalog.get('motown')), 3);
+	for (const id of ['milrock', 'triphop']) assert.equal(depthOf(catalog.get(id)), 4, id);
+	assert.equal(depthOf(catalog.get('dancehall')), 4);
+	assert.equal(depthOf(catalog.get('dnb_pop')), 8);
+	assert.ok(catalog.generations.length >= deepest + 1, 'headings repeat the last label past the named list');
 	for (const [id, parent] of [['house', 'disco'], ['techno', 'disco'], ['grunge', 'altrock']]) {
 		assert.equal(catalog.get(id).parent, parent);
 		assert.equal(depthOf(catalog.get(id)), 4);
@@ -122,17 +131,19 @@ test('the atlas keeps its offshoots and traces the UK rave route as primary line
 	assert.ok(catalog.get('altrock').influences.some(([source]) => source === 'metal'));
 });
 
-test('the Kingston files trace the R&B route to dub and connect it to jungle', () => {
+test('the Kingston files trace the mento route to dub and connect it to jungle', () => {
 	const ids = ['ska', 'rocksteady', 'reggae', 'dub'];
 	const route = ids.map(id => catalog.get(id));
-	assert.equal(catalog.genres.length, 24);
-	assert.deepEqual(route.map(genre => genre.parent), ['rhythm', 'ska', 'rocksteady', 'reggae']);
-	assert.ok(route.every(genre => genre.family === 'rhythm'));
+	assert.equal(catalog.genres.length, 36);
+	assert.deepEqual(route.map(genre => genre.parent), ['mento', 'ska', 'rocksteady', 'reggae']);
+	assert.ok(route.every(genre => genre.family === 'mento'));
 	assert.deepEqual(route.map(genre => catalog.number(genre)), ['021', '022', '023', '024']);
+	assert.ok(catalog.influencedBy('rhythm').includes(route[0]));
 	assert.ok(catalog.influencedBy('jazz').includes(route[0]));
 	assert.ok(catalog.influencedBy('soul').includes(route[1]));
 	assert.ok(catalog.influencedBy('dub').includes(catalog.get('jungle')));
-	assert.deepEqual(catalog.search('Kingston').map(genre => genre.id), ids);
+	assert.deepEqual(catalog.search('Kingston').map(genre => genre.id), [...ids, 'dancehall']);
+	assert.equal(catalog.get('dancehall').parent, 'reggae');
 	for (const genre of route) {
 		assert.equal(catalog.search(genre.landmark.title)[0], genre);
 		assert.equal(catalog.search(genre.study.artist)[0], genre);
@@ -247,7 +258,8 @@ test('search composes terms across name, family, instrument, artist, piece, plac
 	for (const [query, id] of [['chicago house', 'house'], ['detroit techno', 'techno'], [' DRUM   AND BASS ', 'dnb'], ['D&B', 'dnb'], ['drum n bass', 'dnb'], ['rave hardcore', 'hardcore'], ['Seattle sound', 'grunge']]) {
 		assert.equal(catalog.search(query)[0]?.id, id, `first hit for ${query}`);
 	}
-	assert.deepEqual(catalog.search('jungle').map(genre => genre.id), ['jungle']);
+	assert.equal(catalog.search('jungle')[0].id, 'jungle');
+	assert.ok(catalog.search('jungle').every(genre => genre.id === 'jungle' || genre.id === 'dnb_pop'));
 	assert.deepEqual(catalog.search('Valley of the Shadows').map(genre => genre.id), ['jungle']);
 	assert.deepEqual(catalog.search('Bombscare').map(genre => genre.id), ['hardcore']);
 	assert.equal(catalog.search('').length, catalog.genres.length);
@@ -262,13 +274,24 @@ test('ancestor rows stay centered over visible leaves and trace ancestry across 
 	}
 	const origin = records.get('blues');
 	const leafCount = [...records.values()].filter(node => !node.children.length).length;
-	assert.equal(map.measure(origin, 0), leafCount);
-	assert.equal(origin.unit, leafCount / 2);
+	const nodes = [...records.values()];
+	const roots = nodes.filter(node => !node.parent);
+	const view = Object.assign(Object.create(map), { nodes, roots });
+	assert.equal(view.measureForest(), leafCount);
+	assert.deepEqual(roots.map(node => node.unit), [...new Set(roots.map(node => node.unit))].sort((a, b) => a - b));
+	assert.equal(map.isAncestor(origin, records.get('dub')), false);
 	assert.equal(map.isAncestor(origin, records.get('dnb')), true);
 	assert.equal(map.isAncestor(records.get('jazz'), records.get('funk')), false);
 	assert.equal(records.get('disco').unit, (records.get('house').unit + records.get('techno').unit) / 2);
-	for (const id of ['house', 'hardcore', 'jungle']) assert.equal(records.get(id).unit, records.get('dnb').unit);
-	assert.equal(records.get('punk').unit, records.get('grunge').unit);
+	for (const id of ['house', 'hardcore', 'jungle', 'dnb']) assert.equal(records.get(id).unit, records.get('dnb_pop').unit);
+	assert.notEqual(records.get('punk').unit, records.get('grunge').unit);
+	view.branch = 'rock';
+	view.markVisible();
+	assert.deepEqual(nodes.filter(node => node.visible).map(node => node.genre.id), nodes.filter(node => node.genre.family === 'rock' || node === origin).map(node => node.genre.id));
+	view.branch = 'mento';
+	view.markVisible();
+	assert.equal(view.measureForest(), 2);
+	assert.ok(records.get('mento').visible && records.get('dub').visible && !origin.visible);
 });
 
 test('column geometry and guide headings follow the maximum depth in the catalog', t => {
@@ -278,7 +301,10 @@ test('column geometry and guide headings follow the maximum depth in the catalog
 	t.after(() => { delete global.$; delete global.document; });
 	const view = Object.assign(Object.create(map), { catalog, depth: Math.max(...catalog.genres.map(depthOf)) });
 	view.makeGuides();
-	assert.deepEqual(guides, catalog.generations.map((label, i) => `<b>0${i + 1}</b>${label}`));
+	const deepest = Math.max(...catalog.genres.map(depthOf)) + 1;
+	assert.equal(guides.length, deepest);
+	const labels = catalog.generations;
+	assert.deepEqual(guides, Array.from({ length: deepest }, (_, i) => `<b>0${i + 1}</b>${labels[i] || labels.at(-1)}`));
 	for (const compact of [false, true]) {
 		view.compact = compact;
 		const columns = view.computeColumns();
@@ -419,4 +445,39 @@ test('audio errors leave browsing and the transport available for a retry', asyn
 	await player.toggle('jazz');
 	assert.equal(state, 'unavailable');
 	assert.equal(player.active, false);
+});
+
+test('the late files carry their own route, cross-influences and rhythm', () => {
+	const routes = {
+		motown: ['soul', 'rhythm', 'jazz'], psyc: ['rock', 'jazz', 'blues'], prog: ['psyc', 'jazz', 'rock'],
+		dnb_pop: ['dnb', 'dub', 'soul'], triphop: ['hiphop', 'dub', 'soul', 'rock'], dancehall: ['reggae', 'hiphop', 'disco', 'soul'], milrock: ['altrock', 'metal', 'punk', 'jazz']
+	};
+	for (const [id, [parent, ...sources]] of Object.entries(routes)) {
+		const genre = catalog.get(id);
+		assert.equal(genre.parent, parent, id);
+		assert.deepEqual(genre.influences.map(([source]) => source), sources, id);
+		for (const source of sources) assert.ok(catalog.influencedBy(source).includes(genre), `${source} -> ${id}`);
+	}
+	assert.ok(catalog.influencedBy('milrock').length === 0 && catalog.childrenOf('milrock').length === 0);
+	assert.equal(catalog.search('bristol sound')[0], catalog.get('triphop'));
+	assert.equal(catalog.search('liquid dnb')[0], catalog.get('dnb_pop'));
+	assert.equal(catalog.search('math-rock')[0], catalog.get('milrock'));
+	assert.equal(catalog.search('reach out i’ll be there')[0], catalog.get('motown'));
+});
+
+test('a narrow card shrinks its label instead of wrapping it', () => {
+	global.getComputedStyle = () => ({ fontSize: '16px' });
+	const card = (width, scrollWidth) => {
+		const label = { style: {}, offsetLeft: 37, scrollWidth };
+		return { width, button: { clientWidth: width, firstElementChild: { nextElementSibling: { firstElementChild: label } } }, label };
+	};
+	const view = Object.create(map);
+	const roomy = card(140, 94);
+	const scaled = card(96, 96);
+	const floored = card(96, 150);
+	for (const node of [roomy, scaled, floored]) view.fitLabel(node);
+	delete global.getComputedStyle;
+	assert.equal(roomy.label.style.fontSize, '', 'a label that fits keeps its size');
+	assert.equal(scaled.label.style.fontSize, '8.33px', 'a long label shrinks to the card');
+	assert.equal(floored.label.style.fontSize, '8.00px', 'an extreme label stops at the readable floor');
 });

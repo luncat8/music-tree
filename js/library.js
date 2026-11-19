@@ -26,8 +26,8 @@ const atlasLibrary = {
 			if (entry) this.jump(entry.dataset.genre);
 		});
 		this.wireSearch();
-		const branches = catalog.genres.filter(genre => genre.parent && !catalog.get(genre.parent).parent);
-		$('collection-size').textContent = `${catalog.genres.length} genres  /  ${branches.length} branches`;
+		const roots = catalog.childrenOf(null);
+		$('collection-size').textContent = `${catalog.genres.length} genres  /  ${roots.length} roots`;
 	},
 	wireDialog(dialog) {
 		dialog.querySelector('[data-dismiss]').addEventListener('click', () => dialog.close());

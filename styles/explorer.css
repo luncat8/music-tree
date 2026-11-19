@@ -16,19 +16,20 @@
 .generation-row span { display: inline-flex; gap: 7px; align-items: center; position: absolute; top: 21px; transform: translateX(-50%); color: #a5aba2; white-space: nowrap; font-size: 10px; letter-spacing: 1.1px; }
 .generation-row b { color: #747d72; font-size: 9px; font-weight: 400; letter-spacing: .5px; padding-right: 6px; border-right: 1px solid #454b43; }
 .node-layer { pointer-events: none; }
-.genre-node { position: absolute; display: flex; align-items: center; justify-content: flex-start; gap: 9px; padding: 0 12px; transform: translate(-50%, -50%); pointer-events: auto; text-align: left; height: 60px; max-height: var(--node-height); border: 1px solid color-mix(in srgb, var(--tone) 45%, #25292b); border-radius: 7px; background: color-mix(in srgb, var(--tone) 10%, #171a1b); box-shadow: 0 3px 8px #0003; color: var(--tone); }
+.genre-node { position: absolute; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 0 9px; transform: translate(-50%, -50%); pointer-events: auto; text-align: left; height: 60px; max-height: var(--node-height); border: 1px solid color-mix(in srgb, var(--tone) 45%, #25292b); border-radius: 7px; background: color-mix(in srgb, var(--tone) 10%, #171a1b); box-shadow: 0 3px 8px #0003; color: var(--tone); }
 .genre-node::before, .genre-node::after { content: ''; position: absolute; width: 5px; height: 5px; border: 1.5px solid var(--tone); border-radius: 50%; background: #1d211e; top: 50%; transform: translateY(-50%); }
 .genre-node::before { left: -4px; }
 .genre-node::after { right: -4px; }
 .genre-node[data-level='0']::before, .genre-node.is-tip::after { display: none; }
 .genre-node:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 14%, #191c1d); }
 .genre-node:focus-visible { outline-color: var(--tone); outline-offset: 5px; }
-.node-glyph { width: 29px; height: min(30px, var(--node-height) - 7px); display: grid; place-items: center; flex: none; border: 1px solid color-mix(in srgb, var(--tone) 20%, transparent); border-radius: 5px; background: color-mix(in srgb, var(--tone) 7%, transparent); }
-.node-glyph .icon { width: 19px; height: 19px; }
+.node-glyph { width: 24px; height: min(30px, var(--node-height) - 7px); display: grid; place-items: center; flex: none; border: 1px solid color-mix(in srgb, var(--tone) 20%, transparent); border-radius: 5px; background: color-mix(in srgb, var(--tone) 7%, transparent); }
+.node-glyph .icon { width: 17px; height: 17px; }
+/* A wrapped label would grow the card into its row; the layout owner scales the text to the card instead. */
 .node-type { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
-.node-name { font-size: min(16px, var(--node-height) * .4); line-height: 1.14; font-weight: 600; letter-spacing: -.45px; color: #e7eae6; }
-.node-date { font: min(10px, var(--node-height) * .25) / 1.4 var(--mono); color: #acb3aa; white-space: nowrap; }
-.genre-node.is-tip { border-color: color-mix(in srgb, var(--tone) 24%, #2a2c2c); background: color-mix(in srgb, var(--tone) 4%, #1b1e20); height: 46px; gap: 10px; padding-left: 13px; }
+.node-name { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; overflow-wrap: normal; font-size: min(16px, var(--node-height) * .4); line-height: 1.14; font-weight: 600; letter-spacing: -.45px; color: #e7eae6; }
+.node-date { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; font: min(10px, var(--node-height) * .25) / 1.4 var(--mono); color: #acb3aa; }
+.genre-node.is-tip { border-color: color-mix(in srgb, var(--tone) 24%, #2a2c2c); background: color-mix(in srgb, var(--tone) 4%, #1b1e20); height: 46px; gap: 7px; padding-left: 10px; }
 .is-tip .node-name { font-size: min(14px, var(--node-height) * .4); font-weight: 500; letter-spacing: -.1px; }
 .is-tip .node-date { font-size: min(9.5px, var(--node-height) * .25); color: #a1a7a1; }
 .tip-point { width: 6px; height: 6px; border-radius: 50%; background: var(--tone); flex: none; }

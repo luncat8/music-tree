@@ -2,12 +2,15 @@
 // edit for: repertoire, lineages, cross-influences, instruments and reference links
 const genreCatalog = {
 	wikiBase: 'https://en.wikipedia.org/wiki/',
-	generations: ['Origin', 'Branches', 'Styles', 'Offshoots', 'Scenes', 'Crossovers', 'Underground', 'New forms'],
+	generations: ['Roots', 'Branches', 'Styles', 'Offshoots', 'Scenes', 'Crossovers', 'Underground', 'New forms', 'Remixes'],
 	families: {
 		blues: { label: 'Blues', color: '#8cb8e7', glyph: 'disc' },
 		jazz: { label: 'Jazz', color: '#d2f78b', glyph: 'syncopation' },
 		rhythm: { label: 'R&B', color: '#f5b18d', glyph: 'pulse' },
-		rock: { label: 'Rock', color: '#b9a1e5', glyph: 'overdrive' }
+		rock: { label: 'Rock', color: '#b9a1e5', glyph: 'overdrive' },
+		mento: { label: 'Jamaican', color: '#f2ce76', glyph: 'pulse' },
+		country: { label: 'Country', color: '#e8a9bf', glyph: 'disc' },
+		son: { label: 'Afro-Cuban', color: '#7bdbc9', glyph: 'syncopation' }
 	},
 	instruments: {
 		'Backing vocals': 'Backing_vocalist',
@@ -15,27 +18,40 @@ const genreCatalog = {
 		Brass: 'Brass_instrument',
 		Clarinet: 'Clarinet',
 		Clavinet: 'Clavinet',
+		Congas: 'Conga',
 		'Drum machine': 'Drum_machine',
 		Drums: 'Drum_kit',
 		'Effects pedals': 'Effects_unit',
 		'Electric bass': 'Bass_guitar',
 		'Electric guitar': 'Electric_guitar',
 		Guitar: 'Guitar',
+		Banjo: 'Banjo',
+		Fiddle: 'Fiddle',
+		Mandolin: 'Mandolin',
+		'Rumba box': 'Mar%C3%ADmbula',
+		Tres: 'Tres_(instrument)',
+		Bongos: 'Bongo_drum',
+		Claves: 'Claves',
 		Harmonica: 'Harmonica',
 		Horns: 'Horn_section',
+		'Leslie speaker': 'Leslie_speaker',
 		Keyboards: 'Keyboard_instrument',
 		Keys: 'Keyboard_instrument',
 		'Mixing desk': 'Mixing_console',
 		Organ: 'Electronic_organ',
+		Percussion: 'Percussion_instrument',
 		Piano: 'Piano',
 		'Rhythm section': 'Rhythm_section',
 		Sampler: 'Sampler_(musical_instrument)',
+		Sitar: 'Sitar',
 		Saxophone: 'Saxophone',
 		Saxophones: 'Saxophone',
 		Sequencer: 'Music_sequencer',
 		Strings: 'String_section',
 		Synthesizer: 'Synthesizer',
+		Tambourine: 'Tambourine',
 		'Tape echo': 'Delay_(audio_effect)',
+		'Tenor saxophone': 'Tenor_saxophone',
 		Trombone: 'Trombone',
 		Trumpet: 'Trumpet',
 		Turntables: 'Turntablism',
@@ -52,8 +68,8 @@ const genreCatalog = {
 			study: { title: 'Before You Accuse Me', wiki: 'Before_You_Accuse_Me', artist: 'Bo Diddley', artistWiki: 'Bo_Diddley', year: '1957', note: 'Keep a steady shuffle through the twelve-bar form before adding fills.' }
 		},
 		{
-			id: 'jazz', name: 'Jazz', wiki: 'Jazz', parent: 'blues', influences: [], family: 'jazz', date: 'c. 1900', place: 'New Orleans, US',
-			shift: 'Jazz brought blues phrasing into an ensemble conversation. A swinging pulse and improvised lines let each player reshape the melody in real time.',
+			id: 'jazz', name: 'Jazz', wiki: 'Jazz', parent: null, influences: [['blues', 'Blues phrasing and forms became part of the early jazz repertoire.']], family: 'jazz', date: 'c. 1900', place: 'New Orleans, US',
+			shift: 'Early New Orleans jazz brought together blues, ragtime, brass-band marches and dance music. A swinging pulse and improvised lines let each player reshape the melody in real time.',
 			core: ['Trumpet', 'Piano', 'Upright bass'], optional: ['Saxophone', 'Clarinet', 'Drums', 'Trombone'], techniques: ['Improvisation', 'Swing feel', 'Syncopation'], traits: ['Ensemble', 'Improvised'],
 			landmark: { title: 'West End Blues', wiki: 'West_End_Blues', artist: 'Louis Armstrong', ensemble: 'and His Hot Five', artistWiki: 'Louis_Armstrong', year: '1928', note: 'Listen for the opening trumpet cadenza, then the shift into ensemble time.' },
 			study: { title: 'C Jam Blues', wiki: 'C_Jam_Blues', artist: 'Duke Ellington', artistWiki: 'Duke_Ellington', year: '1942', note: 'Use the two-note head to practice swing articulation and a twelve-bar chorus.' }
@@ -100,7 +116,7 @@ const genreCatalog = {
 		},
 		{
 			id: 'rock', name: 'Rock', wiki: 'Rock_music', parent: 'blues', family: 'rock', date: '1950s', place: 'United States',
-			influences: [['rhythm', 'Carried the amplified R&B backbeat, boogie bass and jump-band drive onto guitar-led singles.']],
+			influences: [['rhythm', 'Carried the amplified R&B backbeat, boogie bass and jump-band drive onto guitar-led singles.'], ['country', 'Country guitar picking and vocal phrasing helped shape early rockabilly.']],
 			shift: 'Early rock and roll combined blues forms with country and R&B rhythms. Amplified guitar moved to the front, driving memorable riffs over a firm backbeat.',
 			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Piano', 'Saxophone', 'Voice'], techniques: ['Guitar riffs', 'Backbeat', 'Double-stops'], traits: ['Amplified', 'Riff-led'],
 			landmark: { title: 'Johnny B. Goode', wiki: 'Johnny_B._Goode', artist: 'Chuck Berry', artistWiki: 'Chuck_Berry', year: '1958', note: 'Hear the opening guitar double-stops set up the vocal and band.' },
@@ -221,15 +237,15 @@ const genreCatalog = {
 			study: { title: 'Valley of the Shadows', wiki: 'Valley_of_the_Shadows', artist: 'Origin Unknown', artistWiki: 'Origin_Unknown', year: '1993', note: 'Tap the slow bass pulse while learning one bar of the much faster break.' }
 		},
 		{
-			id: 'ska', name: 'Ska', aliases: ['Jamaican ska', 'first-wave ska'], wiki: 'Ska', parent: 'rhythm', family: 'rhythm', date: 'Late 1950s', place: 'Kingston, Jamaica',
-			influences: [['jazz', 'Jazz-trained horn players brought section riffs and improvised solos to Kingston’s studio bands.']],
+			id: 'ska', name: 'Ska', aliases: ['Jamaican ska', 'first-wave ska'], wiki: 'Ska', parent: 'mento', family: 'mento', date: 'Late 1950s', place: 'Kingston, Jamaica',
+			influences: [['rhythm', 'American R&B shuffles reached Kingston through records and sound systems.'], ['jazz', 'Jazz-trained horn players brought section riffs and improvised solos to Kingston’s studio bands.']],
 			shift: 'Kingston bands drew on Jamaican mento and the American R&B shuffles heard at sound-system dances. Tap your foot with the walking bass: the guitar or piano strikes a short chord just as you lift it.',
 			core: ['Guitar', 'Upright bass', 'Drums', 'Horns'], optional: ['Piano', 'Voice'], techniques: ['Offbeat skank', 'Walking bass', 'Horn riffs'], traits: ['Dance music', 'Sound-system culture'],
 			landmark: { title: 'Guns of Navarone', artist: 'The Skatalites', artistWiki: 'The_Skatalites', year: '1965', note: 'Follow the long notes of the horn theme, then switch your ear to the clipped chords ticking away beneath it.' },
 			study: { title: 'My Boy Lollipop', wiki: 'My_Boy_Lollipop', artist: 'Millie Small', artistWiki: 'Millie_Small', year: '1964', note: 'Count the beats aloud. Add a short upstroke between each pair without letting the chord ring into the next beat.' }
 		},
 		{
-			id: 'rocksteady', name: 'Rocksteady', aliases: ['rock steady'], wiki: 'Rocksteady', parent: 'ska', family: 'rhythm', date: 'Mid-1960s', place: 'Kingston, Jamaica',
+			id: 'rocksteady', name: 'Rocksteady', aliases: ['rock steady'], wiki: 'Rocksteady', parent: 'ska', family: 'mento', date: 'Mid-1960s', place: 'Kingston, Jamaica',
 			influences: [['soul', 'Vocal trios drew on US soul groups, fitting close harmonies and answering phrases around a lead singer.']],
 			shift: 'At rocksteady’s slower pace, the bass no longer had to walk on every beat. A player could leave a gap, then fit several notes before the next chord. Those repeating lines became as memorable as the vocal hooks.',
 			core: ['Electric bass', 'Guitar', 'Drums', 'Voice'], optional: ['Backing vocals', 'Piano', 'Horns'], techniques: ['Melodic bass', 'Close harmony', 'Offbeat skank'], traits: ['Vocal groups', 'Bass-led'],
@@ -237,19 +253,153 @@ const genreCatalog = {
 			study: { title: '007 (Shanty Town)', wiki: '007_(Shanty_Town)', artist: 'Desmond Dekker', ensemble: 'and the Aces', artistWiki: 'Desmond_Dekker', year: '1967', note: 'Sing the opening bass figure before playing it. Keep it going when the vocal comes in rather than doubling the singer’s rhythm.' }
 		},
 		{
-			id: 'reggae', name: 'Reggae', wiki: 'Reggae', parent: 'rocksteady', influences: [], family: 'rhythm', date: 'Late 1960s', place: 'Kingston, Jamaica',
+			id: 'reggae', name: 'Reggae', wiki: 'Reggae', parent: 'rocksteady', influences: [], family: 'mento', date: 'Late 1960s', place: 'Kingston, Jamaica',
 			shift: 'Reggae kept rocksteady’s melodic bass and offbeat guitar but changed the weight of the bar. In a one drop, one of several reggae drum feels, the kick skips beat one and lands with the rim click on three.',
 			core: ['Electric bass', 'Drums', 'Electric guitar'], optional: ['Organ', 'Voice', 'Backing vocals', 'Horns'], techniques: ['One drop', 'Offbeat skank', 'Organ bubble'], traits: ['Bass-led', 'Sound-system culture'],
 			landmark: { title: 'The Harder They Come', wiki: 'The_Harder_They_Come_(song)', artist: 'Jimmy Cliff', artistWiki: 'Jimmy_Cliff', year: '1972', note: 'Listen to the gaps between the guitar chops while Cliff stretches a sung syllable over several beats.' },
 			study: { title: 'Three Little Birds', wiki: 'Three_Little_Birds', artist: 'Bob Marley and the Wailers', artistWiki: 'Bob_Marley_and_the_Wailers', year: '1977', note: 'Play the offbeat chords through the chorus. Sing the melody over them without letting the upstrokes drift onto the beat.' }
 		},
 		{
-			id: 'dub', name: 'Dub', aliases: ['dub reggae', 'dub music'], wiki: 'Dub_music', parent: 'reggae', influences: [], family: 'rhythm', date: 'Early 1970s', place: 'Kingston, Jamaica',
+			id: 'dub', name: 'Dub', aliases: ['dub reggae', 'dub music'], wiki: 'Dub_music', parent: 'reggae', influences: [], family: 'mento', date: 'Early 1970s', place: 'Kingston, Jamaica',
 			shift: 'A reggae single’s backing track could have a second life as a “version”. Engineers played the mixing desk: they cut the voice, pushed the bass forward and sent a lone snare hit into echo. The mix became the performance.',
 			core: ['Mixing desk', 'Electric bass', 'Drums'], optional: ['Tape echo', 'Voice', 'Electric guitar'], techniques: ['Fader mutes', 'Echo sends', 'Spring reverb'], traits: ['Studio production', 'Bass-led'],
 			landmark: { title: 'King Tubby Meets Rockers Uptown', artist: 'Augustus Pablo', ensemble: 'with King Tubby', artistWiki: 'Augustus_Pablo', year: '1976', note: 'On the album’s title track, listen for a drum sound returning as an echo. The bass keeps time even when the other parts disappear.' },
 			study: { title: 'Pick a Dub', artist: 'Keith Hudson', artistWiki: 'Keith_Hudson', year: '1974', note: 'Loop the bass figure and keep it running. Bring a second part in for a bar, mute it, then bring it back on the same beat.' }
-		}
+		},
+		{
+			id: 'motown', name: 'Motown', aliases: ['motown sound', 'detroit soul'], wiki: 'Motown', parent: 'soul', family: 'rhythm', date: 'Late 1950s', place: 'Detroit, US',
+			influences: [
+				['rhythm', 'The vocal groups and dance cuts of R&B supplied the beat and the punchy, verse-length arrangements.'],
+				['jazz', 'Session players brought jazz timing to bass lines that push the song forward between the drum hits.']
+			],
+			shift: 'Motown records were songs first and records second. A tambourine on every backbeat, a bass line that walks ahead of the chord and a chorus that arrives early keep the track moving, even when the lyric is sad.',
+			core: ['Voice', 'Bass guitar', 'Drums'], optional: ['Tambourine', 'Keys', 'Tenor saxophone', 'Strings', 'Congas'],
+			techniques: ['Four-on-the-floor tambourine', 'Melodic bass', 'Call and response'],
+			traits: ['Vocal-led', 'Dance music'],
+			landmark: { title: 'Reach Out I’ll Be There', wiki: 'Reach_Out_I%27ll_Be_There', artist: 'Four Tops', artistWiki: 'Four_Tops', year: '1966', note: 'Hear the bass climb and pull back while the vocal stays urgent. The band never settles into one level.' },
+			study: { title: 'My Girl', wiki: 'My_Girl_(The_Temptations_song)', artist: 'The Temptations', artistWiki: 'The_Temptations', year: '1964', note: 'Learn the guitar figure that opens the song, then hum the bass line underneath it before playing both.' }
+		},
+		{
+			id: 'psyc', name: 'Psychedelic rock', short: 'Psychedelia', aliases: ['psychedelic', 'acid rock'], wiki: 'Psychedelic_rock', parent: 'rock', family: 'rock', date: 'Mid-1960s', place: 'United States & United Kingdom',
+			influences: [
+				['jazz', 'Improvised sections let songs leave their verse shape for a while, as soloists followed the mood of a studio take.'],
+				['blues', 'Bent notes, slow riffs and long guitar breaks stayed at the centre of the louder, longer arrangements.']
+			],
+			shift: 'Psychedelic rock used the studio as an instrument. Guitar effects, tape loops and unusual tunings stretched a three-minute song into a drifting, improvised passage, and a raga-like drone replaced the usual chord changes.',
+			core: ['Electric guitar', 'Bass guitar', 'Drums', 'Keyboards'], optional: ['Effects pedals', 'Sitar', 'Voice'],
+			techniques: ['Feedback', 'Modal drones', 'Studio effects'],
+			traits: ['Improvised', 'Effects-heavy'],
+			landmark: { title: 'Purple Haze', wiki: 'Purple_Haze', artist: 'The Jimi Hendrix Experience', artistWiki: 'The_Jimi_Hendrix_Experience', year: '1967', note: 'The opening riff bends against the chord. Notice how the guitar keeps moving while the bass holds one note.' },
+			study: { title: 'White Rabbit', wiki: 'White_Rabbit_(song)', artist: 'Jefferson Airplane', artistWiki: 'Jefferson_Airplane', year: '1967', note: 'Follow the slow build from a quiet start to the full band. Keep the same tempo throughout.' }
+		},
+		{
+			id: 'prog', name: 'Progressive rock', short: 'Prog', aliases: ['prog rock', 'art rock'], wiki: 'Progressive_rock', parent: 'psyc', family: 'rock', date: 'Late 1960s', place: 'United Kingdom',
+			influences: [
+				['jazz', 'Jazz harmony and odd groupings gave long instrumental sections somewhere to go after the main theme.'],
+				['rock', 'Kept the amplified lineup while letting the arrangement change key, meter and texture inside one piece.']
+			],
+			shift: 'Progressive rock treated a band like a small orchestra. Suites replace choruses, meters change under the same theme, and the keyboard player often leads a section that a guitar will restate later.',
+			core: ['Keyboards', 'Electric guitar', 'Bass guitar', 'Drums'], optional: ['Synthesizer', 'Flute', 'Strings', 'Leslie speaker'],
+			techniques: ['Odd meters', 'Thematic development', 'Mellotron and organ pads'],
+			traits: ['Long-form', 'Composed'],
+			landmark: { title: '21st Century Schizoid Man', wiki: '21st_Century_Schizoid_Man', artist: 'King Crimson', artistWiki: 'King_Crimson', year: '1969', note: 'Count the riff in its fast odd grouping, then hear the middle section open into slow, sustained chords.' },
+			study: { title: 'Roundabout', wiki: 'Roundabout_(song)', artist: 'Yes', artistWiki: 'Yes_(band)', year: '1971', note: 'Learn the opening guitar figure first. It returns twice, so the rest of the piece has an anchor.' }
+		},
+		{
+			id: 'dnb_pop', name: 'Atmospheric drum and bass', short: 'Atmospheric DnB', aliases: ['intelligent dnb', 'liquid dnb', 'ambient jungle'], wiki: 'Atmospheric_drum_and_bass', parent: 'dnb', family: 'rhythm', date: 'Mid-1990s', place: 'United Kingdom',
+			influences: [
+				['dub', 'Echo and reverb pull the drums into a large space while the bass moves slowly underneath.'],
+				['soul', 'Held chords and a sung or sampled voice carry the harmony instead of a short rave stab.']
+			],
+			shift: 'Atmospheric drum and bass kept the fast break but softened its edges. Long chords, filtered vocals and a deep, slow bass push the drums into the background, so the track feels open rather than frantic.',
+			core: ['Sampler', 'Synthesizer', 'Sequencer'], optional: ['Voice', 'Keys', 'Mixing desk'],
+			techniques: ['Filtered pads', 'Reverb-soaked breaks', 'Sub-bass'],
+			traits: ['Atmospheric', 'Breakbeat'],
+			landmark: { title: 'Timeless', wiki: 'Timeless_(Goldie_album)', artist: 'Goldie', artistWiki: 'Goldie', year: '1995', note: 'On the title track, listen for the strings and the bass holding long notes while the drums keep splitting.' },
+			study: { title: 'Juanita', wiki: 'Juanita_%2F_Kiteless_%2F_To_Dream_of_Love', artist: 'Underworld', artistWiki: 'Underworld_(band)', year: '1996', note: 'Loop one bar of the drums, then layer a long held chord over it without changing the drum timing.' }
+		},
+		{
+			id: 'triphop', name: 'Trip-hop', aliases: ['trip hop', 'bristol sound'], wiki: 'Trip_hop', parent: 'hiphop', family: 'rhythm', date: 'Early 1990s', place: 'Bristol, UK',
+			influences: [
+				['dub', 'Studio echo and dropped-out sections make the beat feel like it is coming through a wall.'],
+				['soul', 'Slow, sung lines and warm keyboard chords replace the rapped verse.'],
+				['rock', 'Sampled guitar chords and a live, unsteady drum feel keep the weight of a band.']
+			],
+			shift: 'Trip-hop slowed hip-hop down and let the space around the beat matter. Dusty samples, a heavy backbeat and a sung or murmured voice make the loop feel like a room rather than a dance floor.',
+			core: ['Sampler', 'Drums', 'Keys'], optional: ['Turntables', 'Voice', 'Electric bass', 'Percussion'],
+			techniques: ['Dusty sampling', 'Slow backbeat', 'Vinyl crackle'],
+			traits: ['Atmospheric', 'Sampled'],
+			landmark: { title: 'Roads', wiki: 'Roads_(Portishead_song)', artist: 'Portishead', artistWiki: 'Portishead', year: '1994', note: 'Listen for the organ and the bass under a voice that keeps almost breaking, with very little drumming.' },
+			study: { title: 'Hell Is Round the Corner', wiki: 'Hell_Is_Round_the_Corner', artist: 'Tricky', artistWiki: 'Tricky_(musician)', year: '1995', note: 'Find the one-bar loop first, then count how long it repeats before anything new arrives.' }
+		},
+		{
+			id: 'dancehall', name: 'Dancehall', wiki: 'Dancehall', parent: 'reggae', family: 'mento', date: 'Late 1970s', place: 'Kingston, Jamaica',
+			influences: [
+				['hiphop', 'A voice that drives the rhythm rather than a sung melody, with a DJ trading short phrases across the track.'],
+				['disco', 'A firmer, faster four-beat pulse for a sound system crowd rather than a one drop.'],
+				['soul', 'Bass and drums stripped down to what a sound system can push across an open field.']
+			],
+			shift: 'Dancehall took reggae from the studio to the sound system, then to the street dance. Horns and keyboards fall away, the drum and bass carry everything, and the DJ’s voice is the melody.',
+			core: ['Drums', 'Electric bass', 'Voice'], optional: ['Drum machine', 'Synthesizer', 'Mixing desk'],
+			techniques: ['Riddim versions', 'Patwah toasting', 'Heavy sub-bass'],
+			traits: ['Dance music', 'Sound-system culture'],
+			landmark: { title: 'Bam Bam', wiki: 'Bam_Bam_(Sister_Nancy_song)', artist: 'Sister Nancy', artistWiki: 'Sister_Nancy', year: '1982', note: 'The lyric rides the same riddim several other singers used. Notice how little the backing changes under it.' },
+			study: { title: 'Murder She Wrote', wiki: 'Murder_She_Wrote_(song)', artist: 'Chaka Demus & Pliers', artistWiki: 'Chaka_Demus_%26_Pliers', year: '1992', note: 'Learn the short bass figure, then keep it steady while the vocal jumps across the beat.' }
+		},
+		{
+			id: 'milrock', name: 'Math rock', aliases: ['math-rock'], wiki: 'Math_rock', parent: 'altrock', family: 'rock', date: 'Late 1980s', place: 'United States',
+			influences: [
+				['metal', 'Tapped and palm-muted figures applied metal’s attack to clean, precise guitar tones.'],
+				['punk', 'Short bursts, an independent circuit and a refusal of long solos set the rules.'],
+				['jazz', 'Guitar and bass lines move independently, like two voices in a counterpoint exercise.']
+			],
+			shift: 'Math rock keeps a rock band’s lineup and changes its arithmetic. Guitar and bass play short repeating figures in unusual groupings while the listener counts along and loses the beat.',
+			core: ['Electric guitar', 'Bass guitar', 'Drums'], optional: ['Second guitar', 'Effects pedals'],
+			techniques: ['Tapping', 'Odd groupings', 'Clean arpeggios'],
+			traits: ['Composed', 'Riff-led'],
+			landmark: { title: '40 Rods to the Hogshead', wiki: '40_Rods_to_the_Hogshead', artist: 'Don Caballero', artistWiki: 'Don_Caballero', year: '1995', note: 'Pick one instrument and count its figure through the riff. Each player returns at a different point.' },
+			study: { title: 'Elvis', artist: 'Bastro', year: '1989', note: 'Clap one bar of the riff while listening. When you can keep it, add the guitar line on top.' }
+		},
+		{
+			id: 'mento', name: 'Mento', wiki: 'Mento', parent: null, family: 'mento', date: 'Early 1900s', place: 'Jamaica',
+			influences: [],
+			shift: 'Jamaican mento pairs topical and often humorous lyrics with acoustic strings and a syncopated dance pulse. A rumba box can carry the bass.',
+			core: ['Banjo', 'Guitar', 'Voice'], optional: ['Rumba box', 'Percussion'], techniques: ['Offbeat strums', 'Call and response'], traits: ['Acoustic', 'Dance music'],
+			landmark: { title: 'Linstead Market', artist: 'Louise Bennett', year: '1954', note: 'Listen for how the refrain answers the verse.' },
+			study: { title: 'Day-O', artist: 'Harry Belafonte', year: '1956', note: 'Compare this arrangement of a Jamaican folk song with an acoustic mento performance.' }
+		},
+		{
+			id: 'country', name: 'Country', wiki: 'Country_music', parent: null, family: 'country', date: '1920s', place: 'Southern United States',
+			influences: [],
+			shift: 'Early commercial country recordings drew on regional fiddle tunes, ballads and blues. Guitar bass notes and strums support the sung story.',
+			core: ['Guitar', 'Voice', 'Fiddle'], optional: ['Banjo', 'Harmonica'], techniques: ['Alternating bass', 'Storytelling'], traits: ['Acoustic', 'Vocal-led'],
+			landmark: { title: 'Blue Yodel No. 1', artist: 'Jimmie Rodgers', year: '1928', note: 'Hear how the yodel answers each sung phrase.' },
+			study: { title: 'Wildwood Flower', artist: 'The Carter Family', year: '1928', note: 'Pick out the melody against the guitar strums.' }
+		},
+		{
+			id: 'bluegrass', name: 'Bluegrass', wiki: 'Bluegrass_music', parent: 'country', family: 'country', date: '1940s', place: 'United States',
+			influences: [],
+			shift: 'Bluegrass took string-band tunes into a fast ensemble sound built around close vocal harmony and individual instrumental breaks.',
+			core: ['Banjo', 'Mandolin', 'Fiddle'], optional: ['Guitar', 'Upright bass'], techniques: ['Three-finger rolls', 'Mandolin chop'], traits: ['Acoustic', 'Breaks'],
+			landmark: { title: 'Blue Moon of Kentucky', artist: 'Bill Monroe', year: '1947', note: 'Follow the waltz under the vocal harmony.' },
+			study: { title: 'Foggy Mountain Breakdown', artist: 'Flatt and Scruggs', year: '1949', note: 'Listen for the banjo roll continuing through a chord change.' }
+		},
+		{
+			id: 'son', name: 'Son cubano', wiki: 'Son_cubano', parent: null, family: 'son', date: 'Late 1800s', place: 'Eastern Cuba',
+			influences: [],
+			shift: 'Cuban son combined Spanish-derived song and string traditions with Afro-Cuban rhythmic practices. The tres repeats short figures against syncopated bass and percussion.',
+			core: ['Tres', 'Bongos', 'Claves'], optional: ['Trumpet', 'Voice'], techniques: ['Son clave', 'Call and response'], traits: ['Syncopated', 'Dance music'],
+			landmark: { title: 'Échale salsita', artist: 'Septeto Nacional', year: '1930', note: 'Hear the response to the lead vocal.' },
+			study: { title: 'El cuarto de Tula', artist: 'Buena Vista Social Club', year: '1997', note: 'Follow the recurring backing pattern under the changing vocals.' }
+		},
+		{
+			id: 'salsa', name: 'Salsa', wiki: 'Salsa_music', parent: 'son', family: 'son', date: '1960s–70s', place: 'New York City and the Caribbean',
+			influences: [],
+			shift: 'Salsa musicians built on Cuban son and other Caribbean styles, using repeating piano figures, strong percussion and brass responses in arrangements for dancers.',
+			core: ['Piano', 'Congas', 'Horns'], optional: ['Claves', 'Bongos', 'Voice'], techniques: ['Piano montuno', 'Brass riffs'], traits: ['Dance music', 'Syncopated'],
+			landmark: { title: 'Quimbara', artist: 'Celia Cruz and Johnny Pacheco', year: '1974', note: 'Hear the horns and chorus answer the lead.' },
+			study: { title: 'Pedro Navaja', artist: 'Rubén Blades and Willie Colón', year: '1978', note: 'Track how new layers enter beneath the story.' }
+		},
 	],
 	get(id) {
 		return this.genres.find(genre => genre.id === id);

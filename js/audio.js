@@ -149,6 +149,85 @@ const patternScores = {
 		guide: 'This is a version of the reggae study: the bass and one drop stay put. Only the first chord chop of each bar remains, followed by two shorter, thinner repeats three quarters of a beat apart.',
 		lead: [0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 0, 0, 0, 0, 72, 0], bass: oneDropBass,
 		chords: [[.5, .22, 55, 60, 63, 67], [1.25, .16, 60, 63, 67], [2, .1, 63, 67], [4.5, .22, 56, 60, 65, 68], [5.25, .16, 60, 65, 68], [6, .1, 65, 68]]
+	},
+	motown: {
+		name: 'Bass pickup', bpm: 124, swing: false, voice: 'triangle', drums: { ...backbeatDrums, snares: [1, 1.5, 3, 3.5, 5, 5.5, 7, 7.5] },
+		guide: 'A shuffle-free C major with tambourine on every backbeat. The bass reaches the next chord early, so each bar arrives before the drums confirm it.',
+		lead: [0, 67, 0, 72, 0, 71, 69, 0, 67, 0, 72, 74, 72, 69, 67, 0], bass: [36, 0, 43, 45, 0, 47, 48, 0, 41, 0, 48, 50, 0, 52, 43, 0],
+		chords: [[0, .4, 60, 64, 67], [2, .4, 60, 64, 67], [4, .4, 60, 64, 69], [6, .5, 60, 65, 69]]
+	},
+	psyc: {
+		name: 'Modal drone', bpm: 108, swing: false, voice: 'sawtooth',
+		guide: 'An A drone holds while the guitar and bass circle E and G. Feedback-like repeats stay on the same two chords, so the interest comes from the texture rather than the progression.',
+		lead: [57, 0, 64, 0, 55, 0, 64, 0, 57, 0, 66, 0, 55, 0, 62, 0], bass: [33, 0, 0, 0, 33, 0, 0, 0, 31, 0, 0, 0, 31, 0, 0, 0],
+		chords: [[0, 1.9, 45, 52, 57], [4, 1.9, 43, 50, 55]]
+	},
+	prog: {
+		name: 'Seven-eight riff', bpm: 126, swing: false, voice: 'square',
+		guide: 'A seven-eight bar repeats an E minor figure, then the second bar opens into held chords. Count seven before each return to the top of the riff.',
+		lead: [64, 64, 0, 64, 67, 0, 71, 0, 71, 0, 69, 0, 67, 0, 64, 0], bass: [28, 28, 0, 28, 31, 0, 35, 0, 35, 0, 33, 0, 31, 0, 28, 0],
+		chords: [[0, .6, 52, 59, 64], [3.5, .6, 52, 59, 64], [4, 1.8, 50, 57, 62], [6, 1.7, 52, 59, 64]]
+	},
+	dnb_pop: {
+		name: 'Reese and breaks', bpm: 174, swing: false, voice: 'sine', drums: { kicks: [0, 2.5, 4, 6], snares: [1, 3, 5, 7] },
+		guide: 'A slow two-note bass holds under a fast break. The chords hang for a full bar each so the drums do the moving.',
+		lead: [0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 0, 0, 0, 0, 0], bass: [33, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 33, 0, 0, 0],
+		chords: [[0, 3.8, 57, 60, 64, 69], [4, 3.8, 55, 59, 62, 67]]
+	},
+	triphop: {
+		name: 'Dusty loop', bpm: 88, swing: false, voice: 'triangle', drums: { kicks: [0, 1.75, 4, 5.5], snares: [1, 3, 5, 7] },
+		guide: 'A slow D minor loop with a heavy backbeat and a little extra kick. The chords stay for two beats each and the melody never rises above a murmur.',
+		lead: [0, 0, 65, 0, 69, 0, 0, 67, 0, 0, 65, 0, 62, 0, 0, 0], bass: [38, 0, 0, 0, 41, 0, 0, 0, 38, 0, 0, 0, 36, 0, 0, 0],
+		chords: [[0, 1.4, 53, 57, 60], [2, 1.4, 53, 57, 60], [4, 1.4, 50, 53, 57], [6, 1.8, 48, 53, 55]]
+	},
+	dancehall: {
+		name: 'Riddim bounce', bpm: 102, swing: false, voice: 'square', drums: { kicks: [0, 3, 4, 7], snares: [2, 6] },
+		guide: 'The kick and bass lock onto beats one and four while the snare answers on two and six. Nothing else competes, so the voice would sit on top of the track.',
+		lead: [0, 0, 70, 0, 69, 0, 0, 0, 0, 0, 70, 0, 72, 0, 69, 0], bass: [34, 0, 0, 34, 34, 0, 0, 34, 36, 0, 0, 36, 36, 0, 0, 34],
+		chords: [[.5, .2, 58, 62, 65], [3.5, .2, 58, 62, 65], [4.5, .2, 60, 63, 67], [7.5, .2, 58, 62, 65]]
+	},
+	milrock: {
+		name: 'Five-four cells', bpm: 136, swing: false, voice: 'triangle',
+		guide: 'Two short clean figures share a bar of five beats. The guitar and bass enter at different points in the grouping, so the bar keeps slipping under the foot.',
+		lead: [64, 0, 71, 0, 67, 64, 0, 71, 0, 67, 0, 64, 67, 0, 71, 0], bass: [40, 0, 0, 47, 0, 40, 0, 0, 47, 0, 43, 0, 0, 40, 0, 0],
+		chords: [[0, .45, 55, 59, 64], [2.5, .45, 55, 59, 64], [5, .45, 52, 55, 60]]
+	},
+	mento: {
+		name: 'Rumba box and strum', bpm: 104, swing: false, voice: 'triangle',
+		guide: 'A plucked bass steps around the beat while short offbeat strums leave room for a melodic answer.',
+		lead: [67, 0, 64, 0, 62, 64, 0, 67, 69, 0, 67, 0, 64, 62, 60, 0],
+		bass: [36, 0, 0, 43, 0, 36, 0, 43, 41, 0, 0, 48, 0, 43, 0, 36],
+		chords: [[.5, .2, 52, 55, 60], [1.5, .2, 52, 55, 60], [3.5, .2, 52, 55, 60], [4.5, .2, 53, 57, 60], [6.5, .2, 55, 59, 62], [7.5, .2, 52, 55, 60]]
+	},
+	country: {
+		name: 'Bass note and strum', bpm: 100, swing: false, voice: 'triangle',
+		guide: 'Alternate the root and fifth in the bass, with a light chord strum between bass notes.',
+		lead: [0, 0, 67, 69, 71, 0, 74, 0, 72, 0, 69, 0, 71, 69, 67, 0],
+		bass: [43, 0, 0, 0, 38, 0, 0, 0, 48, 0, 0, 0, 43, 0, 0, 0],
+		chords: [[1, .4, 55, 59, 62], [3, .4, 55, 59, 62], [5, .4, 55, 60, 64], [7, .4, 55, 59, 62]]
+	},
+	bluegrass: {
+		name: 'Cross-string roll', bpm: 152, swing: false, voice: 'triangle',
+		guide: 'Hear the high note recur as the picked figure crosses strings. The short backbeat chords suggest a mandolin chop.',
+		lead: [67, 71, 79, 74, 71, 79, 67, 74, 72, 76, 79, 76, 67, 71, 79, 74],
+		bass: [43, 0, 0, 0, 38, 0, 0, 0, 48, 0, 0, 0, 43, 0, 0, 0],
+		chords: [[1, .15, 55, 59, 62], [3, .15, 55, 59, 62], [5, .15, 55, 60, 64], [7, .15, 55, 59, 62]]
+	},
+	son: {
+		name: 'Three-two son clave', bpm: 96, swing: false, voice: 'triangle',
+		drums: { kicks: [0, 2.5, 4, 6.5], snares: [0, 1.5, 3, 5, 6] },
+		guide: 'The short percussion hits sketch three-two clave. Listen for the bass anticipating the next bar.',
+		lead: [64, 0, 67, 69, 0, 67, 0, 64, 0, 65, 0, 67, 65, 0, 62, 0],
+		bass: [0, 0, 0, 43, 0, 0, 0, 43, 0, 0, 0, 38, 0, 0, 0, 36],
+		chords: [[.5, .3, 52, 55, 60], [2, .3, 55, 60, 64], [4.5, .3, 53, 55, 59], [6, .3, 55, 59, 62]]
+	},
+	salsa: {
+		name: 'Clave and piano montuno', bpm: 112, swing: false, voice: 'triangle',
+		drums: { kicks: [0, 2.5, 4, 6.5], snares: [0, 1.5, 3, 5, 6] },
+		guide: 'Compare the same clave with a busier piano figure. Some chord strikes land before the beat they suggest.',
+		lead: [0, 72, 0, 76, 74, 0, 72, 74, 0, 71, 0, 74, 77, 0, 74, 72],
+		bass: [36, 0, 0, 43, 0, 0, 0, 43, 0, 0, 0, 38, 0, 0, 0, 36],
+		chords: [[.5, .22, 52, 55, 60], [1.5, .22, 55, 60, 64], [2.5, .22, 52, 55, 60], [3.5, .22, 53, 55, 59], [4.5, .22, 55, 59, 62], [5.5, .22, 53, 55, 59], [6.5, .22, 55, 59, 62], [7.5, .22, 52, 55, 60]]
 	}
 };
 
