@@ -260,6 +260,30 @@ const patternScores = {
 		lead: [52, 0, 55, 0, 57, 0, 55, 0, 59, 59, 57, 55, 52, 52, 55, 57],
 		bass: [40, 0, 0, 0, 45, 0, 0, 0, 47, 47, 47, 47, 45, 45, 43, 43],
 		chords: [[0, .7, 52, 59], [2, .7, 55, 62], [4, .8, 55, 59, 62], [6, .8, 53, 57, 60]]
+	},
+	danzon: {
+		name: 'Cinquillo sketch', bpm: 96, swing: false, voice: 'triangle',
+		drums: { kicks: [0, 2, 4, 6], snares: [0, .5, .75, 1.25, 1.5, 2, 2.5, 2.75, 3.25, 3.5, 4, 4.5, 4.75, 5.25, 5.5, 6, 6.5, 6.75, 7.25, 7.5] },
+		guide: 'A synthesized sketch of the five-hit cinquillo figure. The snare marks its accents, not the timbre of a charanga percussion section.',
+		lead: [67, 0, 69, 71, 72, 0, 71, 69, 67, 0, 64, 67, 69, 0, 67, 0],
+		bass: [36, 0, 0, 0, 43, 0, 0, 0, 41, 0, 0, 0, 43, 0, 0, 0],
+		chords: [[0, .7, 60, 64, 67], [2, .7, 59, 62, 67], [4, .7, 60, 65, 69], [6, .7, 59, 62, 67]]
+	},
+	mambo: {
+		name: 'Mambo riff', bpm: 120, swing: false, voice: 'triangle',
+		drums: { kicks: [0, 2.5, 4, 6.5], snares: [0, 1.5, 3, 5, 6] },
+		guide: 'A short horn-like riff answers a syncopated piano figure. The synthesized snare sketches three-two clave; compare the same accents in Son cubano.',
+		lead: [0, 72, 0, 76, 0, 79, 76, 0, 0, 74, 77, 0, 76, 0, 72, 0],
+		bass: [0, 0, 0, 43, 0, 0, 0, 43, 0, 0, 0, 38, 0, 0, 0, 36],
+		chords: [[.5, .2, 52, 55, 60], [1.5, .2, 55, 60, 64], [3, .2, 52, 55, 60], [4.5, .2, 53, 57, 60], [6, .2, 55, 59, 62], [7.5, .2, 52, 55, 60]]
+	},
+	chachacha: {
+		name: 'Triple-step sketch', bpm: 112, swing: false, voice: 'triangle',
+		drums: { kicks: [0, 2, 4, 6], snares: [1, 3, 3.5, 4, 5, 7, 7.5] },
+		guide: 'Three short snare hits across the bar line suggest the cha-cha-chá step. This is a simplified electronic sketch, not a güiro or timbales transcription.',
+		lead: [72, 0, 74, 76, 0, 77, 76, 0, 74, 0, 72, 69, 0, 71, 72, 0],
+		bass: [36, 0, 0, 0, 43, 0, 0, 0, 41, 0, 0, 0, 43, 0, 0, 0],
+		chords: [[0, .5, 60, 64, 67], [2, .5, 60, 64, 67], [4, .5, 60, 65, 69], [6, .5, 59, 62, 67]]
 	}
 };
 

@@ -60,7 +60,7 @@ test('the page composes classic scripts in one scope, with local assets and matc
 
 test('each profile reaches one of the atlas roots, separates secondary influences and supplies both pieces', () => {
 	const origins = catalog.genres.filter(genre => !genre.parent);
-	assert.deepEqual(origins.map(genre => genre.id), ['blues', 'jazz', 'mento', 'country', 'son']);
+	assert.deepEqual(origins.map(genre => genre.id), ['blues', 'jazz', 'mento', 'country', 'son', 'danzon']);
 	assert.equal(catalog.get('bluegrass').parent, 'country');
 	assert.equal(catalog.get('salsa').parent, 'son');
 	assert.ok(catalog.influencedBy('blues').includes(catalog.get('jazz')));
@@ -134,7 +134,7 @@ test('the atlas keeps its offshoots and traces the UK rave route as primary line
 test('the Kingston files trace the mento route to dub and connect it to jungle', () => {
 	const ids = ['ska', 'rocksteady', 'reggae', 'dub'];
 	const route = ids.map(id => catalog.get(id));
-	assert.equal(catalog.genres.length, 40);
+	assert.equal(catalog.genres.length, 43);
 	assert.deepEqual(route.map(genre => genre.parent), ['mento', 'ska', 'rocksteady', 'reggae']);
 	assert.ok(route.every(genre => genre.family === 'mento'));
 	assert.deepEqual(route.map(genre => catalog.number(genre)), ['021', '022', '023', '024']);

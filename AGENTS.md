@@ -67,7 +67,7 @@ getObj().data().action()
 	js/audio.js — two-bar studies, Web Audio scheduling and cancellation.
 	js/library.js — page navigation, index, keyboard search and field guide.
 	styles/atlas.css, explorer.css, library.css — page shell, workspace and browsing respectively.
-	experiments/atlas.test.cjs — offline asset, graph, reference link, transport and integration checks.
+	experiments/*.test.cjs — offline asset, graph, reference link, transport and integration checks.
 	plan-deferred.md — deferred and low-priority feature directions.
 - new code goes to its owner, never appended "because the file is already there". no owner exists -> new file + header + map entry.
 - file > ~500 lines = defect. split by feature within the same plan.
@@ -138,8 +138,8 @@ getObj().data().action()
 
 ## current workstream
 
-- The atlas follows forty genres from five starting points: Blues, Jazz, Mento, Country and Son cubano. Each branch filter keeps the selected family and its primary ancestors. Profile tabs stay selected across genre changes. Sound diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
-- `node --test experiments/atlas.test.cjs` checks assets, graph integrity, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
+- The atlas follows 43 genres from six starting points: Blues, Jazz, Mento, Country, Son cubano and Danzón. Each branch filter keeps the selected family and its primary ancestors. Profile tabs stay selected across genre changes. Sound diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
+- `node --test experiments/*.test.cjs` checks assets, graph integrity, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
 - Map columns and headings derive from catalog depth. Cards fit the column gaps and row spacing; a long label shrinks to its card rather than wrapping, so card height stays fixed. Keep camera viewport bounds separate from the minimum-width plane so new columns stay readable.
 
 ## housekeeping
