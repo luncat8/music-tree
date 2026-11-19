@@ -98,15 +98,14 @@ test('each profile reaches a single origin, separates secondary influences and s
 });
 
 test('the atlas keeps its offshoots and traces the UK rave route as primary lineage', () => {
-	const offshoots = catalog.genres.filter(genre => depthOf(genre) === 3);
-	assert.deepEqual(offshoots.map(genre => genre.id).sort(), ['altrock', 'disco', 'fusion', 'hiphop']);
-	assert.deepEqual([...new Set(offshoots.map(genre => genre.family))].sort(), ['jazz', 'rhythm', 'rock']);
+	for (const id of ['altrock', 'disco', 'fusion', 'hiphop']) assert.equal(depthOf(catalog.get(id)), 3, id);
 	const deepest = Math.max(...catalog.genres.map(depthOf));
 	assert.equal(deepest, 7);
 	assert.equal(catalog.generations.length, deepest + 1);
-	assert.equal(catalog.genres.length, 20);
-	const scenes = catalog.genres.filter(genre => depthOf(genre) === 4);
-	assert.deepEqual(Object.fromEntries(scenes.map(genre => [genre.id, genre.parent])), { house: 'disco', techno: 'disco', grunge: 'altrock' });
+	for (const [id, parent] of [['house', 'disco'], ['techno', 'disco'], ['grunge', 'altrock']]) {
+		assert.equal(catalog.get(id).parent, parent);
+		assert.equal(depthOf(catalog.get(id)), 4);
+	}
 	const rave = ['hardcore', 'jungle', 'dnb'].map(id => catalog.get(id));
 	assert.deepEqual(rave.map(genre => genre.parent), ['house', 'hardcore', 'jungle']);
 	assert.deepEqual(rave.map(depthOf), [5, 6, 7]);
@@ -121,6 +120,25 @@ test('the atlas keeps its offshoots and traces the UK rave route as primary line
 		.map(([source]) => `${genre.id}<-${source}`));
 	for (const arc of ['hiphop<-jazz', 'fusion<-rock', 'fusion<-funk', 'rock<-rhythm', 'funk<-jazz']) assert.ok(crossingBranches.includes(arc), arc);
 	assert.ok(catalog.get('altrock').influences.some(([source]) => source === 'metal'));
+});
+
+test('the Kingston files trace the R&B route to dub and connect it to jungle', () => {
+	const ids = ['ska', 'rocksteady', 'reggae', 'dub'];
+	const route = ids.map(id => catalog.get(id));
+	assert.equal(catalog.genres.length, 24);
+	assert.deepEqual(route.map(genre => genre.parent), ['rhythm', 'ska', 'rocksteady', 'reggae']);
+	assert.ok(route.every(genre => genre.family === 'rhythm'));
+	assert.deepEqual(route.map(genre => catalog.number(genre)), ['021', '022', '023', '024']);
+	assert.ok(catalog.influencedBy('jazz').includes(route[0]));
+	assert.ok(catalog.influencedBy('soul').includes(route[1]));
+	assert.ok(catalog.influencedBy('dub').includes(catalog.get('jungle')));
+	assert.deepEqual(catalog.search('Kingston').map(genre => genre.id), ids);
+	for (const genre of route) {
+		assert.equal(catalog.search(genre.landmark.title)[0], genre);
+		assert.equal(catalog.search(genre.study.artist)[0], genre);
+	}
+	assert.equal(catalog.search('rock steady')[0], route[1]);
+	assert.equal(catalog.search('dub reggae')[0], route[3]);
 });
 
 test('Wikipedia links cover genres, instruments, artists and songs while omitting unavailable entries cleanly', t => {
@@ -169,6 +187,35 @@ test('Wikipedia links cover genres, instruments, artists and songs while omittin
 	assert.match(unlinked, /Traditional · 1920/);
 });
 
+test('selecting a genre renders its file in the active tab with a matching tab stop and label', t => {
+	withProfileDeps(t);
+	const element = () => ({ setAttribute(name, value) { this[name] = value; } });
+	global.$ = element;
+	t.after(() => { delete global.$; });
+	const tabs = ['overview', 'sound', 'listening'].map(tab => ({ ...element(), dataset: { tab }, focus() {} }));
+	const view = Object.assign(Object.create(profile), {
+		catalog, tabs, page: element(), wiki: element(), player: element(), panel: { style: { setProperty() {} } }
+	});
+	const checkFile = (id, tab, text) => {
+		view.show(catalog.get(id), patternScores[id]);
+		assert.ok(view.page.innerHTML.includes(text), `${id}: ${tab} content`);
+		assert.equal(view.page['aria-labelledby'], `tab-${tab}`);
+		for (const button of tabs) {
+			const active = button.dataset.tab === tab;
+			assert.equal(button['aria-selected'], String(active));
+			assert.equal(button.tabIndex, active ? 0 : -1);
+		}
+	};
+	checkFile('jazz', 'overview', catalog.get('jazz').shift);
+	view.openTab('sound');
+	checkFile('reggae', 'sound', patternScores.reggae.guide);
+	checkFile('dub', 'sound', patternScores.dub.guide);
+	view.tabKey({ key: 'End', preventDefault() {} }, 1);
+	checkFile('rocksteady', 'listening', catalog.get('rocksteady').landmark.title);
+	view.openTab('overview');
+	checkFile('ska', 'overview', catalog.get('ska').shift);
+});
+
 test('Led to includes primary offshoots and influence-only paths without inventing successors', t => {
 	withProfileDeps(t);
 	const view = Object.assign(Object.create(profile), { catalog });
@@ -214,8 +261,9 @@ test('ancestor rows stay centered over visible leaves and trace ancestry across 
 		if (node.parent) node.parent.children.push(node);
 	}
 	const origin = records.get('blues');
-	assert.equal(map.measure(origin, 0), 8);
-	assert.equal(origin.unit, 4);
+	const leafCount = [...records.values()].filter(node => !node.children.length).length;
+	assert.equal(map.measure(origin, 0), leafCount);
+	assert.equal(origin.unit, leafCount / 2);
 	assert.equal(map.isAncestor(origin, records.get('dnb')), true);
 	assert.equal(map.isAncestor(records.get('jazz'), records.get('funk')), false);
 	assert.equal(records.get('disco').unit, (records.get('house').unit + records.get('techno').unit) / 2);
@@ -283,7 +331,15 @@ test('every genre has a complete two-bar pattern with playable pitches and drum 
 	}
 });
 
-test('the scheduler distinguishes a straight kick, an offbeat kick and sliced breaks', () => {
+test('the dub version keeps the reggae backing but changes the chord part', () => {
+	const { reggae, dub } = patternScores;
+	assert.equal(dub.bpm, reggae.bpm);
+	assert.deepEqual(dub.bass, reggae.bass);
+	assert.deepEqual(patternDrums(dub), patternDrums(reggae));
+	assert.notDeepEqual(dub.chords, reggae.chords);
+});
+
+test('the scheduler distinguishes straight kicks, offbeat kicks, sliced breaks and a one drop', () => {
 	const floor = [0, 1, 2, 3, 4, 5, 6, 7];
 	const backbeat = [1, 3, 5, 7];
 	for (const [id, kicks, snares] of [
@@ -291,7 +347,7 @@ test('the scheduler distinguishes a straight kick, an offbeat kick and sliced br
 		['techno', floor, [3, 7]], ['hiphop', [0, 2.5, 4, 6.5], backbeat],
 		['hardcore', floor, [1, 2.75, 3, 5, 6.5, 7]],
 		['jungle', [0, 1.75, 2.5, 4, 5.5, 6.75], [1, 2.25, 3, 3.5, 4.75, 5, 6.25, 7, 7.5]],
-		['dnb', [0, 2.5, 4, 5.75, 6.5], backbeat]
+		['dnb', [0, 2.5, 4, 5.75, 6.5], backbeat], ['reggae', [2, 6], [2, 6]], ['dub', [2, 6], [2, 6]]
 	]) {
 		const player = Object.create(atlasAudio);
 		const score = patternScores[id];

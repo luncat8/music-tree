@@ -26,6 +26,7 @@ const genreCatalog = {
 		Keyboards: 'Keyboard_instrument',
 		Keys: 'Keyboard_instrument',
 		'Mixing desk': 'Mixing_console',
+		Organ: 'Electronic_organ',
 		Piano: 'Piano',
 		'Rhythm section': 'Rhythm_section',
 		Sampler: 'Sampler_(musical_instrument)',
@@ -34,6 +35,7 @@ const genreCatalog = {
 		Sequencer: 'Music_sequencer',
 		Strings: 'String_section',
 		Synthesizer: 'Synthesizer',
+		'Tape echo': 'Delay_(audio_effect)',
 		Trombone: 'Trombone',
 		Trumpet: 'Trumpet',
 		Turntables: 'Turntablism',
@@ -209,11 +211,44 @@ const genreCatalog = {
 		},
 		{
 			id: 'jungle', name: 'Jungle', aliases: ['jungle music', 'old school jungle', 'ragga jungle'], wiki: 'Jungle_music', parent: 'hardcore', family: 'rhythm', date: 'Early 1990s', place: 'United Kingdom',
-			influences: [['funk', 'Funk and soul records supplied drum breaks that producers sped up and cut into new rhythms.']],
+			influences: [
+				['funk', 'Funk and soul records supplied drum breaks that producers sped up and cut into new rhythms.'],
+				['dub', 'Jamaican dub mixes showed how much space a bass line could fill when the other parts dropped out or trailed into echo.']
+			],
 			shift: 'Jungle let the chopped break take over from hardcore’s steady kick. Black British producers and MCs drew on Jamaican sound systems, dub and dancehall, pairing fast, shifting drums with deep bass that often felt half as fast.',
 			core: ['Sampler', 'Synthesizer', 'Sequencer'], optional: ['Voice', 'Turntables', 'Mixing desk'], techniques: ['Break slicing', 'Snare rolls', 'Dub bass'], traits: ['Sound-system culture', 'Breakbeat'],
 			landmark: { title: 'Original Nuttah', wiki: 'Original_Nuttah', artist: 'UK Apachi', ensemble: 'with Shy FX', year: '1994', note: 'Hear how the MC fits quick bursts of words into gaps in the chopped drums.' },
 			study: { title: 'Valley of the Shadows', wiki: 'Valley_of_the_Shadows', artist: 'Origin Unknown', artistWiki: 'Origin_Unknown', year: '1993', note: 'Tap the slow bass pulse while learning one bar of the much faster break.' }
+		},
+		{
+			id: 'ska', name: 'Ska', aliases: ['Jamaican ska', 'first-wave ska'], wiki: 'Ska', parent: 'rhythm', family: 'rhythm', date: 'Late 1950s', place: 'Kingston, Jamaica',
+			influences: [['jazz', 'Jazz-trained horn players brought section riffs and improvised solos to Kingston’s studio bands.']],
+			shift: 'Kingston bands drew on Jamaican mento and the American R&B shuffles heard at sound-system dances. Tap your foot with the walking bass: the guitar or piano strikes a short chord just as you lift it.',
+			core: ['Guitar', 'Upright bass', 'Drums', 'Horns'], optional: ['Piano', 'Voice'], techniques: ['Offbeat skank', 'Walking bass', 'Horn riffs'], traits: ['Dance music', 'Sound-system culture'],
+			landmark: { title: 'Guns of Navarone', artist: 'The Skatalites', artistWiki: 'The_Skatalites', year: '1965', note: 'Follow the long notes of the horn theme, then switch your ear to the clipped chords ticking away beneath it.' },
+			study: { title: 'My Boy Lollipop', wiki: 'My_Boy_Lollipop', artist: 'Millie Small', artistWiki: 'Millie_Small', year: '1964', note: 'Count the beats aloud. Add a short upstroke between each pair without letting the chord ring into the next beat.' }
+		},
+		{
+			id: 'rocksteady', name: 'Rocksteady', aliases: ['rock steady'], wiki: 'Rocksteady', parent: 'ska', family: 'rhythm', date: 'Mid-1960s', place: 'Kingston, Jamaica',
+			influences: [['soul', 'Vocal trios drew on US soul groups, fitting close harmonies and answering phrases around a lead singer.']],
+			shift: 'At rocksteady’s slower pace, the bass no longer had to walk on every beat. A player could leave a gap, then fit several notes before the next chord. Those repeating lines became as memorable as the vocal hooks.',
+			core: ['Electric bass', 'Guitar', 'Drums', 'Voice'], optional: ['Backing vocals', 'Piano', 'Horns'], techniques: ['Melodic bass', 'Close harmony', 'Offbeat skank'], traits: ['Vocal groups', 'Bass-led'],
+			landmark: { title: 'The Tide Is High', wiki: 'The_Tide_Is_High', artist: 'The Paragons', artistWiki: 'The_Paragons', year: '1967', note: 'Listen past the violin to the steady bass figure. The voices hold their notes across its rests.' },
+			study: { title: '007 (Shanty Town)', wiki: '007_(Shanty_Town)', artist: 'Desmond Dekker', ensemble: 'and the Aces', artistWiki: 'Desmond_Dekker', year: '1967', note: 'Sing the opening bass figure before playing it. Keep it going when the vocal comes in rather than doubling the singer’s rhythm.' }
+		},
+		{
+			id: 'reggae', name: 'Reggae', wiki: 'Reggae', parent: 'rocksteady', influences: [], family: 'rhythm', date: 'Late 1960s', place: 'Kingston, Jamaica',
+			shift: 'Reggae kept rocksteady’s melodic bass and offbeat guitar but changed the weight of the bar. In a one drop, one of several reggae drum feels, the kick skips beat one and lands with the rim click on three.',
+			core: ['Electric bass', 'Drums', 'Electric guitar'], optional: ['Organ', 'Voice', 'Backing vocals', 'Horns'], techniques: ['One drop', 'Offbeat skank', 'Organ bubble'], traits: ['Bass-led', 'Sound-system culture'],
+			landmark: { title: 'The Harder They Come', wiki: 'The_Harder_They_Come_(song)', artist: 'Jimmy Cliff', artistWiki: 'Jimmy_Cliff', year: '1972', note: 'Listen to the gaps between the guitar chops while Cliff stretches a sung syllable over several beats.' },
+			study: { title: 'Three Little Birds', wiki: 'Three_Little_Birds', artist: 'Bob Marley and the Wailers', artistWiki: 'Bob_Marley_and_the_Wailers', year: '1977', note: 'Play the offbeat chords through the chorus. Sing the melody over them without letting the upstrokes drift onto the beat.' }
+		},
+		{
+			id: 'dub', name: 'Dub', aliases: ['dub reggae', 'dub music'], wiki: 'Dub_music', parent: 'reggae', influences: [], family: 'rhythm', date: 'Early 1970s', place: 'Kingston, Jamaica',
+			shift: 'A reggae single’s backing track could have a second life as a “version”. Engineers played the mixing desk: they cut the voice, pushed the bass forward and sent a lone snare hit into echo. The mix became the performance.',
+			core: ['Mixing desk', 'Electric bass', 'Drums'], optional: ['Tape echo', 'Voice', 'Electric guitar'], techniques: ['Fader mutes', 'Echo sends', 'Spring reverb'], traits: ['Studio production', 'Bass-led'],
+			landmark: { title: 'King Tubby Meets Rockers Uptown', artist: 'Augustus Pablo', ensemble: 'with King Tubby', artistWiki: 'Augustus_Pablo', year: '1976', note: 'On the album’s title track, listen for a drum sound returning as an echo. The bass keeps time even when the other parts disappear.' },
+			study: { title: 'Pick a Dub', artist: 'Keith Hudson', artistWiki: 'Keith_Hudson', year: '1974', note: 'Loop the bass figure and keep it running. Bring a second part in for a bar, mute it, then bring it back on the same beat.' }
 		}
 	],
 	get(id) {

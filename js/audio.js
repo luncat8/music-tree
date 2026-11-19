@@ -2,6 +2,9 @@
 // edit for: rhythms, voicings, timbres and playback
 const backbeatDrums = { kicks: [0, 2, 4, 6], snares: [1, 3, 5, 7] };
 const floorDrums = { ...backbeatDrums, kicks: [0, 1, 2, 3, 4, 5, 6, 7] };
+// Keep the reggae backing intact so the dub mix can be compared with its source.
+const oneDropDrums = { kicks: [2, 6], snares: [2, 6] };
+const oneDropBass = [0, 36, 0, 43, 0, 0, 46, 43, 0, 41, 0, 48, 0, 0, 44, 43];
 const patternScores = {
 	blues: {
 		name: 'E shuffle', bpm: 92, swing: true, voice: 'triangle',
@@ -122,6 +125,30 @@ const patternScores = {
 		guide: 'Snares jump ahead of the beat and double up before the bar ends. Follow the slower bass phrase underneath the sixteenth-note drum edits.',
 		lead: [0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 67], bass: [31, 31, 0, 0, 31, 0, 0, 38, 34, 34, 0, 0, 31, 0, 0, 0],
 		chords: [[1.5, .26, 63, 67, 74], [5.5, .24, 62, 65, 70]]
+	},
+	ska: {
+		name: 'Offbeat chop', bpm: 128, swing: false, voice: 'square',
+		guide: 'The bass walks on all four beats. Count “one and two and”: the short D and G chords land on each “and”, while a high horn-like phrase answers in the second bar.',
+		lead: [0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 74, 76, 74, 0, 71, 0], bass: [38, 0, 42, 0, 45, 0, 42, 0, 43, 0, 47, 0, 50, 0, 45, 0],
+		chords: [[.5, .2, 57, 62, 66], [1.5, .2, 57, 62, 66], [2.5, .2, 57, 62, 66], [3.5, .2, 57, 62, 66], [4.5, .2, 59, 62, 67], [5.5, .2, 59, 62, 67], [6.5, .2, 59, 62, 67], [7.5, .2, 59, 62, 67]]
+	},
+	rocksteady: {
+		name: 'Bass pickup', bpm: 84, swing: false, voice: 'triangle',
+		guide: 'At this slower pace the bass has room to sing. Listen for the C sharp just before bar two: it leads up to D while the chord chops leave a gap.',
+		lead: [0, 0, 64, 66, 0, 64, 61, 0, 0, 0, 66, 69, 0, 66, 64, 0], bass: [33, 0, 0, 40, 45, 0, 0, 37, 38, 0, 0, 45, 42, 0, 0, 40],
+		chords: [[.5, .25, 57, 61, 64], [1.5, .25, 57, 61, 64], [2.5, .25, 57, 61, 64], [4.5, .25, 57, 62, 66], [5.5, .25, 57, 62, 66], [6.5, .25, 57, 62, 66]]
+	},
+	reggae: {
+		name: 'One drop', bpm: 76, swing: false, voice: 'triangle', drums: oneDropDrums,
+		guide: 'Count four beats to a bar. The kick leaves beat one empty and meets the snare on three. The bass enters between beats under clipped C minor and F minor chords.',
+		lead: [0, 0, 0, 0, 0, 70, 67, 0, 0, 0, 0, 68, 0, 0, 72, 0], bass: oneDropBass,
+		chords: [[.5, .22, 55, 60, 63, 67], [1.5, .22, 55, 60, 63, 67], [2.5, .22, 55, 60, 63, 67], [3.5, .22, 55, 60, 63, 67], [4.5, .22, 56, 60, 65, 68], [5.5, .22, 56, 60, 65, 68], [6.5, .22, 56, 60, 65, 68], [7.5, .22, 56, 60, 65, 68]]
+	},
+	dub: {
+		name: 'Echo return', bpm: 76, swing: false, voice: 'triangle', drums: oneDropDrums,
+		guide: 'This is a version of the reggae study: the bass and one drop stay put. Only the first chord chop of each bar remains, followed by two shorter, thinner repeats three quarters of a beat apart.',
+		lead: [0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 0, 0, 0, 0, 72, 0], bass: oneDropBass,
+		chords: [[.5, .22, 55, 60, 63, 67], [1.25, .16, 60, 63, 67], [2, .1, 63, 67], [4.5, .22, 56, 60, 65, 68], [5.25, .16, 60, 65, 68], [6, .1, 65, 68]]
 	}
 };
 

@@ -138,7 +138,7 @@ getObj().data().action()
 
 ## current workstream
 
-- The atlas follows twenty genres and three branches, including the UK rave route into drum and bass. The Sound tab diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
+- The atlas follows twenty-four genres and three branches, including the Kingston route from ska to dub and the UK rave route into drum and bass. Profile tabs stay selected across genre changes. Sound diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
 - `node --test experiments/atlas.test.cjs` checks assets, graph integrity, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
 - Map columns and headings derive from catalog depth. Cards fit the column gaps and row spacing. Keep camera viewport bounds separate from the minimum-width plane so new columns stay readable.
 

@@ -1,6 +1,7 @@
 // owns: the selected genre file, lineage links, reference links and transport display
 // edit for: profile tabs, rhythm diagrams, Wikipedia links and player feedback
 const genreProfile = {
+	activeTab: 'overview',
 	init(catalog, choose, toggle, backToMap) {
 		this.catalog = catalog;
 		this.panel = $('profile-region');
@@ -48,7 +49,7 @@ const genreProfile = {
 		$('play-meta').textContent = `${score.name} · ${score.bpm} BPM`;
 		this.makeWave(score);
 		this.transport('idle');
-		this.openTab('overview');
+		this.openTab(this.activeTab);
 	},
 	makeWave(score) {
 		let path = '';
@@ -66,6 +67,7 @@ const genreProfile = {
 		$('play-symbol').setAttribute('href', playing ? '#i-stop' : '#i-play');
 	},
 	openTab(tab) {
+		this.activeTab = tab;
 		for (const button of this.tabs) {
 			const active = button.dataset.tab === tab;
 			button.setAttribute('aria-selected', String(active));
