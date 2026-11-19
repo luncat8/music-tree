@@ -228,6 +228,38 @@ const patternScores = {
 		lead: [0, 72, 0, 76, 74, 0, 72, 74, 0, 71, 0, 74, 77, 0, 74, 72],
 		bass: [36, 0, 0, 43, 0, 0, 0, 43, 0, 0, 0, 38, 0, 0, 0, 36],
 		chords: [[.5, .22, 52, 55, 60], [1.5, .22, 55, 60, 64], [2.5, .22, 52, 55, 60], [3.5, .22, 53, 55, 59], [4.5, .22, 55, 59, 62], [5.5, .22, 53, 55, 59], [6.5, .22, 55, 59, 62], [7.5, .22, 52, 55, 60]]
+	},
+	honkytonk: {
+		name: 'Two-beat shuffle', bpm: 116, swing: true, voice: 'triangle',
+		drums: { kicks: [0, 2, 4, 6], snares: [1, 3, 5, 7] },
+		guide: 'A swung two-beat pulse leaves space for the melody. The bass marks the strong beats while short chords and a high answer suggest piano and steel fills.',
+		lead: [0, 67, 0, 69, 71, 0, 69, 67, 0, 64, 67, 0, 69, 67, 64, 0],
+		bass: [43, 0, 0, 0, 38, 0, 0, 0, 48, 0, 0, 0, 43, 0, 0, 0],
+		chords: [[1, .32, 55, 59, 62], [3, .32, 55, 59, 62], [5, .32, 55, 60, 64], [7, .32, 55, 59, 62]]
+	},
+	outlaw: {
+		name: 'Loose backbeat', bpm: 104, swing: false, voice: 'sawtooth',
+		drums: { kicks: [0, 2, 4, 6], snares: [1, 3, 5, 7] },
+		guide: 'A plain electric-band backbeat holds a low, unhurried melody. The short, slightly rough phrases leave room for a vocal and guitar fills.',
+		lead: [52, 0, 55, 0, 57, 0, 55, 52, 0, 52, 0, 55, 57, 55, 52, 0],
+		bass: [40, 0, 0, 0, 45, 0, 0, 0, 47, 0, 0, 0, 45, 0, 0, 0],
+		chords: [[0, .7, 52, 59], [2, .65, 55, 62], [4, .7, 57, 64], [6, .65, 55, 62]]
+	},
+	countryrock: {
+		name: 'Twang over a backbeat', bpm: 112, swing: false, voice: 'triangle',
+		drums: backbeatDrums,
+		guide: 'A steady rock backbeat carries an open major-key progression. A bright, recurring guitar-like melody and held chords suggest the blend of country twang and a full band.',
+		lead: [67, 0, 71, 0, 74, 0, 71, 67, 69, 0, 72, 0, 76, 0, 72, 69],
+		bass: [43, 0, 0, 0, 38, 0, 0, 0, 48, 0, 0, 0, 43, 0, 0, 0],
+		chords: [[0, .8, 55, 59, 62], [2, .8, 55, 60, 64], [4, .8, 55, 59, 62], [6, .8, 55, 60, 64]]
+	},
+	altcountry: {
+		name: 'Roots into indie rock', bpm: 96, swing: false, voice: 'sawtooth',
+		drums: { kicks: [0, 3, 4, 6], snares: [1, 3, 5, 7] },
+		guide: 'A spare first bar opens into a louder chord sequence. Keep the measured pulse as the guitar line grows from a small roots figure into a rougher band sound.',
+		lead: [52, 0, 55, 0, 57, 0, 55, 0, 59, 59, 57, 55, 52, 52, 55, 57],
+		bass: [40, 0, 0, 0, 45, 0, 0, 0, 47, 47, 47, 47, 45, 45, 43, 43],
+		chords: [[0, .7, 52, 59], [2, .7, 55, 62], [4, .8, 55, 59, 62], [6, .8, 53, 57, 60]]
 	}
 };
 

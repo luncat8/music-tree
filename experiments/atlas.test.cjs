@@ -134,7 +134,7 @@ test('the atlas keeps its offshoots and traces the UK rave route as primary line
 test('the Kingston files trace the mento route to dub and connect it to jungle', () => {
 	const ids = ['ska', 'rocksteady', 'reggae', 'dub'];
 	const route = ids.map(id => catalog.get(id));
-	assert.equal(catalog.genres.length, 36);
+	assert.equal(catalog.genres.length, 40);
 	assert.deepEqual(route.map(genre => genre.parent), ['mento', 'ska', 'rocksteady', 'reggae']);
 	assert.ok(route.every(genre => genre.family === 'mento'));
 	assert.deepEqual(route.map(genre => catalog.number(genre)), ['021', '022', '023', '024']);
@@ -150,6 +150,32 @@ test('the Kingston files trace the mento route to dub and connect it to jungle',
 	}
 	assert.equal(catalog.search('rock steady')[0], route[1]);
 	assert.equal(catalog.search('dub reggae')[0], route[3]);
+});
+
+test('the Country files expand from honky-tonk into outlaw and country-rock lineages', () => {
+	const ids = ['honkytonk', 'outlaw', 'countryrock', 'altcountry'];
+	const files = ids.map(id => catalog.get(id));
+	assert.deepEqual(files.map(genre => genre.parent), ['country', 'honkytonk', 'country', 'countryrock']);
+	assert.ok(files.every(genre => genre.family === 'country'));
+	assert.deepEqual(files.map(genre => catalog.number(genre)), ['037', '038', '039', '040']);
+	assert.deepEqual(files.map(genre => depthOf(genre)), [1, 2, 1, 2]);
+	assert.deepEqual(files[2].influences.map(([source]) => source), ['rock']);
+	assert.deepEqual(files[3].influences.map(([source]) => source), ['altrock', 'punk']);
+	for (const source of ['rock', 'altrock', 'punk']) {
+		const child = files.find(genre => genre.influences.some(([id]) => id === source));
+		assert.ok(catalog.influencedBy(source).includes(child), `${source} -> ${child.id}`);
+	}
+	assert.equal(catalog.search('honky tonk')[0], files[0]);
+	assert.equal(catalog.search('outlaw country')[0], files[1]);
+	assert.equal(catalog.search('alt-country')[0], files[3]);
+	assert.equal(catalog.search('California Stars')[0], files[3]);
+
+	const records = new Map(catalog.genres.map(genre => [genre.id, { genre, visible: true }]));
+	for (const node of records.values()) node.parent = records.get(node.genre.parent);
+	const view = Object.assign(Object.create(map), { branch: 'country', nodes: [...records.values()] });
+	view.markVisible();
+	assert.deepEqual(view.nodes.filter(node => node.visible).map(node => node.genre.id).sort(),
+		['altcountry', 'bluegrass', 'country', 'countryrock', 'honkytonk', 'outlaw']);
 });
 
 test('Wikipedia links cover genres, instruments, artists and songs while omitting unavailable entries cleanly', t => {

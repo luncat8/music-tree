@@ -12,7 +12,8 @@ const genreCatalog = {
 		country: { label: 'Country', color: '#e8a9bf', glyph: 'disc' },
 		son: { label: 'Afro-Cuban', color: '#7bdbc9', glyph: 'syncopation' }
 	},
-	instruments: {
+		instruments: {
+		'Acoustic guitar': 'Acoustic_guitar',
 		'Backing vocals': 'Backing_vocalist',
 		'Bass guitar': 'Bass_guitar',
 		Brass: 'Brass_instrument',
@@ -399,6 +400,41 @@ const genreCatalog = {
 			core: ['Piano', 'Congas', 'Horns'], optional: ['Claves', 'Bongos', 'Voice'], techniques: ['Piano montuno', 'Brass riffs'], traits: ['Dance music', 'Syncopated'],
 			landmark: { title: 'Quimbara', artist: 'Celia Cruz and Johnny Pacheco', year: '1974', note: 'Hear the horns and chorus answer the lead.' },
 			study: { title: 'Pedro Navaja', artist: 'Rubén Blades and Willie Colón', year: '1978', note: 'Track how new layers enter beneath the story.' }
+		},
+		{
+			id: 'honkytonk', name: 'Honky-tonk', aliases: ['honky tonk'], wiki: 'Honky-tonk', parent: 'country', family: 'country', date: '1940s', place: 'Texas and the American South',
+			influences: [],
+			shift: 'Honky-tonk made the dance-floor band central to country music. A clipped two-beat bass leaves room for piano, fiddle and pedal steel to answer a plainspoken vocal, with the room’s rowdy energy left in the performance.',
+			core: ['Voice', 'Guitar', 'Upright bass', 'Drums'], optional: ['Piano', 'Fiddle', 'Pedal steel guitar'], techniques: ['Two-beat bass', 'Steel guitar fills', 'Plainspoken vocal'], traits: ['Dance music', 'Barroom sound'],
+			landmark: { title: 'Your Cheatin’ Heart', wiki: 'Your_Cheatin%27_Heart', artist: 'Hank Williams', artistWiki: 'Hank_Williams', year: '1953', note: 'Listen for the fiddle and steel answering the vocal between its short phrases.' },
+			study: { title: 'I’m So Lonesome I Could Cry', wiki: 'I%27m_So_Lonesome_I_Could_Cry', artist: 'Hank Williams', artistWiki: 'Hank_Williams', year: '1949', note: 'Keep a light two-beat pulse and leave space after each sung line.' }
+		},
+		{
+			id: 'outlaw', name: 'Outlaw country', short: 'Outlaw', aliases: ['outlaw'], wiki: 'Outlaw_country', parent: 'honkytonk', family: 'country', date: '1970s', place: 'Texas and Nashville, US',
+			influences: [],
+			shift: 'Outlaw country grew from artists pushing back against Nashville’s polished studio system. They kept country songs and dance-band instruments but used rougher band arrangements and a more personal, sometimes rebellious voice.',
+			core: ['Voice', 'Electric guitar', 'Bass guitar', 'Drums'], optional: ['Fiddle', 'Pedal steel guitar', 'Piano'], techniques: ['Loose ensemble feel', 'Story-led vocal', 'Electric guitar fills'], traits: ['Roots music', 'Singer-songwriter'],
+			landmark: { title: 'Are You Sure Hank Done It This Way', wiki: 'Are_You_Sure_Hank_Done_It_This_Way', artist: 'Waylon Jennings', artistWiki: 'Waylon_Jennings', year: '1975', note: 'Hear the steady band groove beneath a lyric questioning country music’s direction.' },
+			study: { title: 'Mammas Don’t Let Your Babies Grow Up to Be Cowboys', wiki: 'Mamas_Don%27t_Let_Your_Babies_Grow_Up_to_Be_Cowboys', artist: 'Waylon Jennings and Willie Nelson', artistWiki: 'Waylon_Jennings', year: '1978', note: 'Keep the relaxed pulse steady while the two voices trade the lines.' }
+		},
+		{
+			id: 'countryrock', name: 'Country rock', aliases: ['country-rock'], wiki: 'Country_rock', parent: 'country', family: 'country', date: 'Late 1960s', place: 'California, US',
+			influences: [['rock', 'Amplified guitars and rock-band arrangements met country harmony, song forms and instrumental colors.']],
+			shift: 'Country rock brought country melodies and twang into the electric rock band. Drums and bass drive a full-group sound, while harmony vocals and steel guitar keep the country colors audible.',
+			core: ['Electric guitar', 'Bass guitar', 'Drums', 'Voice'], optional: ['Pedal steel guitar', 'Piano', 'Backing vocals'], techniques: ['Harmony vocals', 'Twang guitar', 'Full-band arrangement'], traits: ['Crossover', 'Roots music'],
+			landmark: { title: 'Take It Easy', wiki: 'Take_It_Easy_(Eagles_song)', artist: 'Eagles', artistWiki: 'Eagles_(band)', year: '1972', note: 'Listen for close vocal harmonies over a rock-band pulse and country-tinged guitar parts.' },
+			study: { title: 'Already Gone', wiki: 'Already_Gone_(Eagles_song)', artist: 'Eagles', artistWiki: 'Eagles_(band)', year: '1974', note: 'Keep the backbeat firm while the guitar figure and vocal harmonies share the hook.' }
+		},
+		{
+			id: 'altcountry', name: 'Alternative country', short: 'Alt-country', aliases: ['alt country', 'alt-country', 'alternative country', 'altcountry'], wiki: 'Alternative_country', parent: 'countryrock', family: 'country', date: 'Late 1980s–1990s', place: 'United States',
+			influences: [
+				['altrock', 'Independent rock bands brought a DIY approach, rough edges and a wider palette of song forms.'],
+				['punk', 'Punk’s directness and independent ethos shaped early alternative-country bands and their recordings.']
+			],
+			shift: 'Alternative country connected country songwriting and instruments to the independent rock scene. Some bands kept the twang; others made the recordings rougher and more expansive, without settling into one standard sound.',
+			core: ['Voice', 'Electric guitar', 'Bass guitar', 'Drums'], optional: ['Acoustic guitar', 'Fiddle', 'Pedal steel guitar'], techniques: ['Independent recording', 'Roots instrumentation', 'Dynamic guitar arrangements'], traits: ['Independent', 'Crossover'],
+			landmark: { title: 'No Depression', wiki: 'No_Depression_(song)', artist: 'Uncle Tupelo', artistWiki: 'Uncle_Tupelo', year: '1990', note: 'Hear a country two-step feel delivered with the urgency and roughness of an indie band.' },
+			study: { title: 'California Stars', wiki: 'California_Stars', artist: 'Wilco', artistWiki: 'Wilco', year: '1998', note: 'Let the steady beat support a broad, sustained melody rather than a busy country shuffle.' }
 		},
 	],
 	get(id) {
