@@ -60,14 +60,15 @@ getObj().data().action()
 - keep this map updated when ownership changes:
 	index.html — document landmarks, SVG symbols and classic script order.
 	js/main.js — boot, shared root and selection wiring only.
-	js/catalog.js — genre graph, editorial records, family metadata and Wikipedia slugs.
+	js/catalog.js — genre graph composer, family metadata, instrument and Wikipedia slugs.
+	js/lineages/*.js — editorial records, one file per family, each numbered in archive order.
 	js/marks.js — shared inline icon references and family swatches.
 	js/map.js — node layout, branch and influence links, filter and camera.
 	js/profile.js — genre file, lineage links, reference links, rhythm grid and transport display.
 	js/audio.js — two-bar studies, Web Audio scheduling and cancellation.
 	js/library.js — page navigation, index, keyboard search and field guide.
 	styles/atlas.css, explorer.css, library.css — page shell, workspace and browsing respectively.
-	experiments/*.test.cjs — offline asset, graph, reference link, transport and integration checks.
+	experiments/*.test.cjs — offline asset, graph, lineage split, reference link, transport and integration checks.
 	plan-deferred.md — deferred and low-priority feature directions.
 - new code goes to its owner, never appended "because the file is already there". no owner exists -> new file + header + map entry.
 - file > ~500 lines = defect. split by feature within the same plan.
@@ -139,7 +140,8 @@ getObj().data().action()
 ## current workstream
 
 - The atlas follows 43 genres from six starting points: Blues, Jazz, Mento, Country, Son cubano and Danzón. Each branch filter keeps the selected family and its primary ancestors. Profile tabs stay selected across genre changes. Sound diagrams each study’s kicks and snares. Genre plates are deferred and instrument imagery is low priority (`plan-deferred.md`). Preserve keyboard-accessible nodes, local runtime assets and gesture-initiated audio.
-- `node --test experiments/*.test.cjs` checks assets, graph integrity, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
+- `node --test experiments/*.test.cjs` checks assets, graph integrity, lineage completeness and numbering, camera bounds, reference links, studies, rhythm grids, cancellation and script integration.
+- Records live in `js/lineages/*.js`, one per family, each carrying its `file` slot. Append a branch there; `js/catalog.js` only composes and never holds records.
 - Map columns and headings derive from catalog depth. Cards fit the column gaps and row spacing; a long label shrinks to its card rather than wrapping, so card height stays fixed. Keep camera viewport bounds separate from the minimum-width plane so new columns stay readable.
 
 ## housekeeping
